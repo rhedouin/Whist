@@ -15,7 +15,7 @@ for j = 1:length(axonlist)
     %% From Wharton 12        
     map = zeros(dims);
     ind_myelin = axonlist(j).data;
-    ind_axon = as_myelin2axon(ind_myelin);
+    ind_axon = myelin2axon(ind_myelin);
 
     sub_myelin = sub2ind(dims,ind_myelin(:,1),ind_myelin(:,2));  
     sub_axon = sub2ind(dims,ind_axon(:,1),ind_axon(:,2));    
@@ -27,7 +27,7 @@ for j = 1:length(axonlist)
     small_map_dims = max_ind_myelin - min_ind_myelin + 2*extra_space;
     
     new_ind_myelin = ind_myelin - min_ind_myelin + extra_space;
-    new_ind_axon = as_myelin2axon(new_ind_myelin);
+    new_ind_axon = myelin2axon(new_ind_myelin);
 
     new_sub_myelin = sub2ind(small_map_dims,new_ind_myelin(:,1),new_ind_myelin(:,2));  
     new_sub_axon = sub2ind(small_map_dims,new_ind_axon(:,1),new_ind_axon(:,2));    
@@ -62,7 +62,7 @@ for j = 1:length(axonlist)
         total_X(ind_myelin(k,1),ind_myelin(k,2),:,:) = Xi+R*Xa*inv(R);
         
         if compute_phimap
-            phimap(ind_myelin(k,1),ind_myelin(k,2)) = angle( exp(i*phi) );
+            phimap(ind_myelin(k,1),ind_myelin(k,2)) = angle( exp(1i*phi) );
         end
     end
 end

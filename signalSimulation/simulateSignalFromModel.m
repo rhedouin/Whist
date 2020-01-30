@@ -1,4 +1,4 @@
-function [signal field] = simulateSignalFromModel(axon_collection, mask, xa, xi,  T2out, T2myel, weight, time, B0, field_direction)
+function [signal, field] = simulateSignalFromModel(axon_collection, mask, xa, xi,  T2out, T2myel, weight, time, B0, field_direction)
 
 gamma = 42.6;
 dims = size(mask);
