@@ -1,15 +1,13 @@
-function [axon_collection, FVF_current] = repulseAxons(axon_collection, FVF_expected, tol, dims)
+function [axon_collection, FVF_current] = repulseAxons(axon_collection, FVF_expected, tol, mask)
 
 pts = cat(1,axon_collection(:).Centroid);
+dims = size(mask);
 
 plot = 1;
 step = 0.01;
 
-[~, ~, FVF_current] = createModelFromData(axon_collection, dims, plot);
+[~, ~, FVF_current] = createModelFromData(axon_collection, mask, plot);
 
-N = length(axon_collection);
-
-iter = 1;
 while or((FVF_current < FVF_expected - tol),(FVF_current > FVF_expected))
     display(['currentFVF : ' num2str(FVF_current)]);
 
@@ -32,13 +30,12 @@ while or((FVF_current < FVF_expected - tol),(FVF_current > FVF_expected))
         
     end
     
-    [~, ~, FVF_current] = createModelFromData(axon_collection, dims, plot);
+    [~, ~, FVF_current] = createModelFromData(axon_collection, mask, plot);
 
     if (FVF_current < FVF_expected - tol)
         axon_collection = axon_collection_old;
         step = step/2;
-    end
-    
+    end  
 end
 
 end

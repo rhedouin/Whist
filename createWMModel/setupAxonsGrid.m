@@ -36,12 +36,6 @@ for k=1:N
     axonCollection(k).data = axonCollection(k).data - axonCollection(k).Centroid + pts(k,:);
     axonCollection(k).Centroid =  pts(k,:);
 end
-
-% AxonSeg
-plot = 1;
-if plot == 1
-    createModelFromData(axonCollection, dims, plot);
-end
 end
 
 

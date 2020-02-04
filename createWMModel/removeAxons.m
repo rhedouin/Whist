@@ -1,6 +1,6 @@
-function [axon_collection, FVF_current] = removeAxons(axon_collection, FVF_expected, tol, dims)
+function [axon_collection, FVF_current] = removeAxons(axon_collection, FVF_expected, tol, mask)
 plot = 0;
-[~, ~, FVF_current] = createModelFromData(axon_collection, dims, plot);
+[~, ~, FVF_current] = createModelFromData(axon_collection, mask, plot);
 iter_tolerance = 0;
 iter_total = 0;
 
@@ -26,7 +26,7 @@ while or((FVF_current < FVF_expected - tol),(FVF_current > FVF_expected))
     n = randi(length(axon_collection));
     
     axon_collection(n) = [];   
-    [~, ~, FVF_current] = createModelFromData(axon_collection, dims, plot);
+    [~, ~, FVF_current] = createModelFromData(axon_collection, mask, plot);
 
 end
 display(['Final model with ' num2str(length(axon_collection)) ' axons, current FVF : ' num2str(FVF_current)]);

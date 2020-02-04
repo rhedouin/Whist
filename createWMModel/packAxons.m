@@ -1,7 +1,9 @@
-function [axon_collection, FVF] = packAxons(axon_collection, dims, iter_max, FVF_max)
+function [axon_collection, FVF] = packAxons(axon_collection, mask, max_iteration, max_FVF, step)
 % author : Renaud Hedouin 
 % email : renaud.hedouin@gmail.com
 % Code adapted from Tom Mingasson toolbox 
+
+dims = size(mask);
 
 disp(' ')
 disp('Packing in process...')
@@ -12,31 +14,30 @@ FVF(1) = 0;
 
 plot = 1;
 
-for iter = 1:iter_max
+for iter = 1:max_iteration
     disp(['Iteration : ' num2str(iter)]);
     if (mod(iter, 10)) == 0
-        [~, ~, FVF, ~] = createModelFromData(axon_collection, dims, plot);
+        [~, ~, FVF, ~] = createModelFromData(axon_collection, mask, plot);
         
         disp(['FVF : ' num2str(FVF)]);
     
         pause(0.1)
-        if(FVF > FVF_max)
+        if(FVF > max_FVF)
             break;
         end
     end
-    axon_collection = packAxonsOneIteration(axon_collection, dims, FVF);
+    axon_collection = packAxonsOneIteration(axon_collection, dims, FVF, step);
 
 end
 end
 
 
-function axon_collection = packAxonsOneIteration(axon_collection, dims, FVF)
+function axon_collection = packAxonsOneIteration(axon_collection, dims, FVF, step)
 
 pts = cat(1,axon_collection(:).Centroid);
 N=size(pts,1);
 
 % Progressive attraction coefficient
-step = 0.5;
 Kcenter0 = step*(1 - FVF);     % center step coeff for disks withOUT overlapping
 Kcenter1 = 0;         % center step coeff for disks with overlapping
 Krep = step*(1-FVF)/2;

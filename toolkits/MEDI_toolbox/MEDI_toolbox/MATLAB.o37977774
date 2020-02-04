@@ -1,0 +1,29 @@
+----------------------------------------
+Begin PBS Prologue wo dec 18 14:14:02 CET 2019 1576674842
+Job ID:		   37977774.dccn-l029.dccn.nl
+Username:	   renhed
+Group:		   mrphys
+Asked resources:   walltime=05:47:00,mem=30gb,nodes=1,neednodes=1
+Queue:		   interactive
+Nodes:		   dccn-c004.dccn.nl
+----------------------------------------
+Limiting memory+swap to 32749125632 bytes ...
+End PBS Prologue wo dec 18 14:14:02 CET 2019 1576674842
+----------------------------------------
+New Walltime: 09:19:40
+Job info started...
+MATLAB is selecting SOFTWARE OPENGL rendering.
+----------------------------------------
+Begin PBS Epilogue wo dec 18 15:40:27 CET 2019 1576680027
+Job ID:		   37977774.dccn-l029.dccn.nl
+Job Exit Code:     0
+Username:	   renhed
+Group:		   mrphys
+Job Name:	   MATLAB
+Session:	   28853
+Asked resources:   walltime=05:47:00,mem=30gb,nodes=1,neednodes=1
+Used resources:	   cput=01:12:54,walltime=00:53:31,mem=4990029824b
+Queue:		   interactive
+Nodes:		   dccn-c004.dccn.nl
+End PBS Epilogue wo dec 18 15:40:27 CET 2019 1576680027
+----------------------------------------
