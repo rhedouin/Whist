@@ -12,7 +12,7 @@ compute_phimap = 1;
 grad_threshold = 0.0001;
 
 for j = 1:length(axonlist)
-    %% From Wharton 12        
+
     map = zeros(dims);
     ind_myelin = axonlist(j).data;
     ind_axon = myelin2axon(ind_myelin);

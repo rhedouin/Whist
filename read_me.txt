@@ -1,4 +1,6 @@
 White matter simulation (WHIST) (name ?)
+Made by blabla
+License blabla
 
 This matlab pipeline has 2 main purposes 
 

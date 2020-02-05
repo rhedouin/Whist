@@ -1,5 +1,4 @@
 function TotalField = createFieldFrom2DTensorX(tensor_X,B0,gamma,H_Vec)
-% From ApplySTI in COSMOS_STI_Toolbox
 
 dims = size(tensor_X);
 [kx,ky] = ndgrid(-dims(1)/2:dims(1)/2-1, -dims(2)/2:dims(2)/2-1);

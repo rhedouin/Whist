@@ -49,8 +49,6 @@ magn_signal = abs(signal_original);
 phase_signal = phase(signal_original);
 
 %%%%%%%%%%%%% Plot field and signals
-figure; 
-
 h = figure('Name', 'Field Perturbation');
 position = [10 10 990 790];
 h.Position = position;    
