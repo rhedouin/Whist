@@ -1,4 +1,6 @@
-function [axon_collection, mean_g_ratio] = changeGRatio(axon_collection, expected_g_ratio, dims)
+function [axon_collection, mean_g_ratio] = changeGRatio(axon_collection, expected_g_ratio, mask)
+
+dims = size(mask);
 
 g_list = cat(1,axon_collection(:).gRatio);
 mean_g_ratio = mean(g_list);
@@ -19,6 +21,9 @@ it = 0;
 while stop == 0
     
     it = it+1;
+    
+    display(['mean g-ratio : ' num2str(mean_g_ratio)]);
+    display(['surface g-ratio : ' num2str(surface_g_ratio)]);
     
     cdf_list = cumsum([0; pdf_list]);
     if (cdf_list(end) == 0)
@@ -58,8 +63,9 @@ while stop == 0
             
             if (length(current_myelin_index) ~= nb_pixel)
                 
-                axon_collection(k).data = current_myelin;
-               
+                axon_collection(k).data = current_myelin;               
+                [~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 1);
+
                 current_g_ratio = sqrt(length(current_axon_index) / (length(current_myelin_index) + length(current_axon_index)));
                 
                 axon_collection(k).gRatio = current_g_ratio;
@@ -74,13 +80,11 @@ while stop == 0
             end
                 
         case 'shrink'
-%             map_bound = zeros(dims);
             
             bound = bwboundaries(myelin_map, 'noholes');
             bound = bound{1};
             bound_index = sub2ind(dims,bound(:,1),bound(:,2));
             bound_index = sort(unique(bound_index));
-%             map_bound(bound_index) = 1;
             
             axon_map = zeros(dims);
             axon_map(old_axon_index) = 1;

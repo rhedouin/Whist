@@ -11,7 +11,7 @@ for k = 1:N
 end
 maxRadius = (maxSize /2) + 5;
 % dimension of the square area
-sqrt_N = round(sqrt(N-1) + 1);
+sqrt_N = floor(sqrt(N-1)) + 1;
 
 % Random positions on a grid for the N axons
 if ~exist('dims')

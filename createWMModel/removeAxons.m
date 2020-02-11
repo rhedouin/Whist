@@ -1,6 +1,11 @@
 function [axon_collection, FVF_current] = removeAxons(axon_collection, FVF_expected, tol, mask, plot_model)
 
 [~, ~, FVF_current] = createModelFromData(axon_collection, mask, plot_model);
+
+if FVF_current < FVF_expected
+    error('The current FVF before axon dispersions is lower than the expected FVF and cannot be reach')
+end
+
 iter_tolerance = 0;
 iter_total = 0;
 
