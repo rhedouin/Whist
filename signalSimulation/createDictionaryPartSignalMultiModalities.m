@@ -1,10 +1,10 @@
 function out = createDictionaryPartSignalMultiModalities(signal_path, output_folder, experience_name, T2myelRange, T2outRange, weightRange, nb_TE, noise, FVF, nb_orientations, replic, dict_options)
-load(signal_path); %#ok<LOAD>
-time = time(1:nb_TE); %#ok<NODEF>
+load(signal_path); 
+time = time(1:nb_TE); 
 
-lgRatio = length(gRatioRange); %#ok<USENS>
-lXi = length(xiRange); %#ok<USENS>
-lXa = length(xaRange); %#ok<USENS>
+lgRatio = length(gRatioRange); 
+lXi = length(xiRange); 
+lXa = length(xaRange); 
 lDir = size(fiber_directions,1);
 lT2myel = length(T2myelRange);
 lT2out = length(T2outRange);
@@ -62,7 +62,7 @@ for l = 1:lgRatio
                             for rot = 1:nb_orientations
                                 Signal0 = SignalComponent(l,m,n,o,rot);
 
-                                SignalWithR2 = exp(-time/T2out).*Signal0.Axon(1,nb_TE) + weight*exp(-time/T2myel).*Signal0.Myelin(1:nb_TE) + ...
+                                SignalWithR2 = exp(-time/T2out).*Signal0.Axon(1:nb_TE) + weight*exp(-time/T2myel).*Signal0.Myelin(1:nb_TE) + ...
                                                exp(-time/T2out).*Signal0.Extra(1:nb_TE);
                                 SignalWithR2 = SignalWithR2 / abs(SignalWithR2(1));
                                 SignalWithR2 = SignalWithR2 + noise*(randn(1,nb_TE) + 1i*randn(1,nb_TE));

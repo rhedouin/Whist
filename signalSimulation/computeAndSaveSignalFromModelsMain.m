@@ -41,8 +41,8 @@ for k = 1:8
 %     for FVF = 10 : 10 : 30
 
         tic()
-        job{it} = qsubfeval(@computeAndSaveSignalFromModels, FVF, suffix, model_inputfolder, signal_outputfolder, options, 'memreq',  req_mem,  'timreq',  req_etime);
-%         out = computeAndSaveSignalFromModels(FVF, suffix, model_inputfolder, signal_outputfolder, options);
+%         job{it} = qsubfeval(@computeAndSaveSignalFromModels, FVF, suffix, model_inputfolder, signal_outputfolder, options, 'memreq',  req_mem,  'timreq',  req_etime);
+        out = computeAndSaveSignalFromModels(FVF, suffix, model_inputfolder, signal_outputfolder, options);
         
         toc()
     end

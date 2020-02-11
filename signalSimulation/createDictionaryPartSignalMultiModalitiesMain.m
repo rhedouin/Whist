@@ -18,11 +18,20 @@ T2outRange = (20 : 20 : 100)* 1e-3;
 
 weightRange = [0.5 1 1.5 2 2.5 3];
 
+
+FVFRange = 40;
+
+T2myelRange = 4*1e-3;
+T2outRange = 20* 1e-3;
+
+weightRange = 0.5;
+
+
 nb_TE = 12;
 nb_orientations = 6;
 
 noise = 0.01;
-nb_replic = 8;
+nb_replic = 1;
 
 it = 0;
 experience_name = 'Porcine2'

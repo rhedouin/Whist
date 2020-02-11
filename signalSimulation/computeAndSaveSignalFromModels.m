@@ -75,6 +75,7 @@ for k = 1: lGRatio
     clear Model ZoomedModel axon_collection  
     gRatio = gRatioRange(k);
 
+    keyboard;
     axonFileName = [FVF_inputfolder 'AxonMap_FVF' num2str(FVF)  '_gRatio' num2str(gRatio) '_N400' suffix '.mat']
     load(axonFileName);
 
