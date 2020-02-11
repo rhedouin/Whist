@@ -16,7 +16,9 @@ nb_sample = length(unique(sample_mask)) - 1;
 time = linspace(1.7,35.25,12)*1e-3;
 edge = 10;
 
-for k = 2:nb_sample
+theta_nii = load_nii_img_only(
+
+for k = 1:nb_sample
     display(['nb sample : ' num2str(k)])
 
     sample =  single(sample_mask == k);
@@ -39,8 +41,8 @@ for k = 2:nb_sample
     
     sample_mask_nii.hdr.dime.dim(2:4) = size(small_sample_mask);
     sample_mask_nii.img = single(small_sample_mask);
-    sample_mask_nii.hdr.datatype = 16;
-    sample_mask_nii.hdr.bitpix = 32;
+    sample_mask_nii.hdr.dime.datatype = 16;
+    sample_mask_nii.hdr.dime.bitpix = 32;
     small_sample_mask_path = ([output_data_folder 'Porcine-1_' ses '_small_sample_' num2str(k) '_mask.nii.gz']);
     save_untouch_nii(sample_mask_nii, small_sample_mask_path);
     

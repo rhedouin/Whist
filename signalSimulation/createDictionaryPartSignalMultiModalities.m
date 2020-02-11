@@ -1,17 +1,20 @@
-function out = createDictionaryPartSignalMultiModalities(signal_path, output_folder, T2myelRange, T2outRange, weightRange, time, noise, FVF, nb_orientations, replic, dict_options)
-load(signal_path);
+function out = createDictionaryPartSignalMultiModalities(signal_path, output_folder, experience_name, T2myelRange, T2outRange, weightRange, nb_TE, noise, FVF, nb_orientations, replic, dict_options)
+load(signal_path); %#ok<LOAD>
+time = time(1:nb_TE); %#ok<NODEF>
 
-lgRatio = length(gRatioRange);
-lXi = length(xiRange);
-lXa = length(xaRange);
+lgRatio = length(gRatioRange); %#ok<USENS>
+lXi = length(xiRange); %#ok<USENS>
+lXa = length(xaRange); %#ok<USENS>
 lDir = size(fiber_directions,1);
 lT2myel = length(T2myelRange);
 lT2out = length(T2outRange);
 lWeight = length(weightRange); 
 
-nb_TE = length(time);
-
-length_one_orientation = 2*nb_TE + 1;
+if dict_options.include_theta
+   length_one_orientation = 2*nb_TE + 1;
+else
+   length_one_orientation = 2*nb_TE;
+end
 lVec = nb_orientations * length_one_orientation;
 
 coordinate_total_list = fieldnames(dict_options.coordinate);
@@ -26,14 +29,14 @@ for kCoordinate = 1:length(coordinate_total_list)
 end
 lCoordinate = length(coordinate_list);
 
-gRatioDicoTemp = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-xiDicoTemp = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-xaDicoTemp = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-T2myelDicoTemp = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-T2outDicoTemp = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-weightDicoTemp = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-directionsDicoTemp = zeros(3,lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-thetaDicoTemp = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
+gRatioValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
+xiValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
+xaValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
+T2myelValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
+T2outValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
+weightValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
+directionsValues = zeros(3,lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
+thetaValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
 
 tic()
 for l = 1:lgRatio
@@ -57,10 +60,10 @@ for l = 1:lgRatio
                             end
                                                         
                             for rot = 1:nb_orientations
-                                
                                 Signal0 = SignalComponent(l,m,n,o,rot);
 
-                                SignalWithR2 = exp(-time/T2out).*Signal0.Axon + weight*exp(-time/T2myel).*Signal0.Myelin + exp(-time/T2out).*Signal0.Extra;
+                                SignalWithR2 = exp(-time/T2out).*Signal0.Axon(1,nb_TE) + weight*exp(-time/T2myel).*Signal0.Myelin(1:nb_TE) + ...
+                                               exp(-time/T2out).*Signal0.Extra(1:nb_TE);
                                 SignalWithR2 = SignalWithR2 / abs(SignalWithR2(1));
                                 SignalWithR2 = SignalWithR2 + noise*(randn(1,nb_TE) + 1i*randn(1,nb_TE));
                                 SignalWithR2 = SignalWithR2 / abs(SignalWithR2(1));
@@ -116,21 +119,21 @@ for l = 1:lgRatio
                                 
                             end
 
-                            main_direction = SignalComponent(l,m,n,o,9).current_dir;
+                            main_direction = SignalComponent(l,m,n,o,6).current_dir;
 
                             for kCoordinate = 1:lCoordinate
                                 coordinate = coordinate_list{kCoordinate};
                                 SignalValuesMultiCoordinates.(coordinate)(:,l,m,n,o,p,q,r) = tempSignalVector.(coordinate);
                             end
                             
-                            gRatioDicoTemp(l,m,n,o,p,q,r) = Signal0.gRatio;
-                            xiDicoTemp(l,m,n,o,p,q,r) = xi;
-                            xaDicoTemp(l,m,n,o,p,q,r) = xa;
-                            T2myelDicoTemp(l,m,n,o,p,q,r) = T2myel;
-                            T2outDicoTemp(l,m,n,o,p,q,r) = T2out;
-                            weightDicoTemp(l,m,n,o,p,q,r) = weight;
-                            directionsDicoTemp(:,l,m,n,o,p,q,r) = main_direction;
-                            thetaDicoTemp(l,m,n,o,p,q,r) = acos(abs(main_direction(3)));
+                            gRatioValues(l,m,n,o,p,q,r) = Signal0.gRatio;
+                            xiValues(l,m,n,o,p,q,r) = xi;
+                            xaValues(l,m,n,o,p,q,r) = xa;
+                            T2myelValues(l,m,n,o,p,q,r) = T2myel;
+                            T2outValues(l,m,n,o,p,q,r) = T2out;
+                            weightValues(l,m,n,o,p,q,r) = weight;
+                            directionsValues(:,l,m,n,o,p,q,r) = main_direction;
+                            thetaValues(l,m,n,o,p,q,r) = acos(abs(main_direction(3)));
                             
                         end
                     end
@@ -141,15 +144,6 @@ for l = 1:lgRatio
     end
 end
 toc()
-
-gRatioValues = squeeze(gRatioDicoTemp);
-xiValues = squeeze(xiDicoTemp);
-xaValues = squeeze(xaDicoTemp);
-T2myelValues = squeeze(T2myelDicoTemp);
-T2outValues = squeeze(T2outDicoTemp);
-weightValues = squeeze(weightDicoTemp);
-directionsValues = squeeze(directionsDicoTemp);
-thetaValues = squeeze(thetaDicoTemp);
 
 gRatio = gRatioRange/100;
 
@@ -172,17 +166,19 @@ for kCoordinate = 1:lCoordinate
     coordinate = coordinate_list{kCoordinate};
 
     base_name = [prefix_name '_FVF' num2str(FVF) '_replic' num2str(replic) '_' num2str(nb_orientations) ...
-                 'orientations_' length(time)  'TE_Porcine1_fix_xa_' coordinate '_'  suffix_theta];
+                 'orientations_' num2str(nb_TE)  'TE_' experience_name '_fix_xa_' coordinate '_'  suffix_theta];
     signal_name = [base_name '.h5py'];
 
-    SignalValues = single(squeeze(SignalValuesMultiCoordinates.(coordinate)));
+    SignalValues = single(SignalValuesMultiCoordinates.(coordinate));
     
     save([output_folder '/' signal_name], 'SignalValues', ...
      'gRatioRange', 'xiRange', 'xaRange', 'T2myelRange','T2outRange','weightRange', ...
     'gRatioValues', 'xiValues', 'xaValues', 'T2myelValues', 'T2outValues', 'directionsValues', 'thetaValues', ...
     'weightValues', 'time', 'infoDico', 'infoSignal', 'sphere_rotations', '-v7.3')
-end
 
+end
+out = 0;
+end
 
 
 
