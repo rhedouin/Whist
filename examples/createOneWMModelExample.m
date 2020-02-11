@@ -14,37 +14,39 @@ close all;
 
 %%%%%%%%%% Set parameters
 %%%%%%%%%% Required
-your_folder = '/project/3015069.04/code/'; 
+
+% your_folder = '/project/3015069.04/code/'; 
+your_folder = [pwd,'/']; 
 % location of the toolbox
 axon_dictionary_path = [your_folder 'data/axonMediumDict.mat'];
+addpath([your_folder 'createWMModel'])
 % axon dictionary path
-expected_FVF = 0.7;
-% expected FVF of the final WM model
 
 %%%%%%%%%% Options set with default values
 %%%%%%%%%% White matter model 
-options.number_of_axons = 400;
-options.dims = [1000 1000]; 
-options.mask = zeros(options.dims); 
-options.mask(round(options.dims(1)/3):round(2*options.dims(1)/3), round(options.dims(2)/3):round(2*options.dims(2)/3)) = 1;
+model_params.number_of_axons = 100; % 
+model_params.dims = [1000 1000]; 
+% options.mask = zeros(options.dims); 
+% options.mask(round(options.dims(1)/3):round(2*options.dims(1)/3), round(options.dims(2)/3):round(2*options.dims(2)/3)) = 1;
 
 %%%%%%%%%% Axons packing 
-options.max_FVF = 0.85;
-options.max_iteration = 5000;
-options.packing_speed = 0.5;
+model_params.max_FVF = 0.6;
+model_params.max_iteration = 1000;
+model_params.packing_speed = 2;
 
 %%%%%%%%%%% Axons dispersion
-options.dispersion_mode = 'spread'; 
-options.tolerance = 0.01;
+model_params.expected_FVF = 0.1;
+model_params.dispersion_mode = 'spread'; 
+model_params.tolerance = 0.01;
 
 %%%%%%%%%%% Change g-ratio
-options.expected_g_ratio = 0.6;
+model_params.expected_g_ratio = 0.5;
 
 %%%%%%%%%%% Plot / save
-options.plot_model = 1;
-options.save_model = '/project/3015069.04/WM_Models/toto.mat';
+model_params.plot_model = 1;
+model_params.save_model = [your_folder 'WMmodel/Toto.mat'];
 
-createOne2DWMModel(axon_dictionary_path, expected_FVF, options);
+[axon_collection, Model, ZoomedModel] = createOne2DWMModel(axon_dictionary_path, model_params);
 
 
 

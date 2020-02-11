@@ -1,5 +1,7 @@
 function [signal, field] = simulateSignalFromModel(axon_collection, mask, xa, xi,  T2out, T2myel, weight, time, B0, field_direction)
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 gamma = 42.6;
 dims = size(mask);
 
@@ -36,8 +38,8 @@ for l = 1:N
     signal_Extra(l) = sum(C_extra, 'all');
 end
 
-signal_Axon = exp(-time/T2myel).*signal_Axon / nb_pixel;
-signal_Myelin = weight*exp(-time/T2out).*signal_Myelin / nb_pixel;
+signal_Axon = exp(-time/T2out).*signal_Axon / nb_pixel;
+signal_Myelin = weight*exp(-time/T2myel).*signal_Myelin / nb_pixel;
 signal_Extra = exp(-time/T2out).*signal_Extra / nb_pixel;
 
 signal = signal_Axon + signal_Myelin + signal_Extra;
