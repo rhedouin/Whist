@@ -2,7 +2,7 @@ clear
 % close all
 
 base_folder = '/project/3015069.04/';
-dico_folder = [base_folder 'dictionaries/multi_orientations/Porcine2/'];
+dico_folder = [base_folder 'dictionaries/multi_orientations/Porcine2/without_dispersion/'];
 
 FVFRange = (40 : 5 : 85);
 
@@ -14,7 +14,7 @@ nb_TE = 12;
 noise = '1';
 experience_name = 'Porcine2';
 
-suffix = 'polyfit_cartesian_without_theta';
+suffix = 'polyfit_cartesian_with_theta';
 
 tic()
 display('Concatenation ...')

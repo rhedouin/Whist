@@ -11,41 +11,63 @@ dims = size(mask);
 % plot the WM model, the fiber volume fraction (FVF) is computed within the
 % mask represented by the red rectangle
 plot_model = 1;
-createModelFromData(oneAxon, mask, plot_model);
+mask = zeros(dims);
+mask(30:70, 30:70) = 1;
+model = createModelFromData(oneAxon, mask, plot_model);
 
 %%%%%%%%%%% Set parameters
 % field strength in Tesla
-B0 = 3;
+model_parameters.B0 = 3;
 
-% myelin susceptibility relative to intra/extra axonal compartments
-% anisotropic
-xa = -0.1;
-% isotropic
-xi = -0.1;
+% myelin 
+model_parameters.myelin.T2 = 15*1e-3;
+model_parameters.myelin.T1 = 500*1e-3;
+model_parameters.myelin.proton_density= 0.5; 
 
-% T2 values
-T2_intra_extra = 50*1e-3;
-T2_myelin = 15*1e-3;
-
-% TE / TR
-TE = (2:3:59)*1e-3;
+model_parameters.myelin.xi = -0.1;  % myelin anisotropic susceptibility (ppm)
+model_parameters.myelin.xa = -0.1;  % myelin isotropic susceptibility (ppm)
 
 % Relative water signal received from myelin compare to intra/extra compartment (see
 % computeRelativeWeightFromT1Effect.m)
-weight = 1;
+
+model_parameters.flip_angle = 20;
+model_parameters.TR = 60*1e-3;
+
+% intra axonal
+model_parameters.intra_axonal.T2 = 50*1e-3;
+model_parameters.intra_axonal.T1 = 1.5;
+model_parameters.intra_axonal.proton_density= 0.5; 
+
+% extra axonal
+model_parameters.extra_axonal.T2 = 50*1e-3;
+model_parameters.extra_axonal.T1 = 1.5;
+model_parameters.extra_axonal.proton_density= 0.5; 
+
+% TE 
+model_parameters.TE = (2:3:59)*1e-3;
+model_parameters = computeCompartmentSignalWeight(model_parameters);
 
 % magnetic field orientation
 theta = pi/2;
 phi = pi/2;
 field_direction = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)];
+model_parameters.field_direction = field_direction;
+
+% mask
+model_parameters.mask = mask;
 
 %%%%%%%%%%%%% Simulate the field perturbation from the WM model and the multi GRE signals
-[signal_original, field] = simulateSignalFromModel(oneAxon, mask, xa, xi,  T2_intra_extra, T2_myelin, weight, TE, B0, field_direction);
+[signal_original, field] = simulateSignalFromModel_v2(oneAxon, model_parameters);
 
-magn_signal = abs(signal_original);
-phase_signal = phase(signal_original);
+options.new_figure = 1;
+options.mask = mask;
 
-%%%%%%%%%%%%% Plot the field perturbation, the magnetic field ori
+createHistogramFieldPerturbation(model, field, options);
+
+magn_signal = abs(signal_original.total);
+phase_signal = phase(signal_original.total);
+
+%%%%%%%%%%%%% Plot field and signals
 figure; 
 
 subplot(221)
