@@ -3,9 +3,10 @@ clear
 close all
 
 %%%%%%%%%%%% Load a WM model with a single axon
-model_path = '/project/3015069.04/WM_Models/oneAxon/oneAxon.mat';
+model_path = '/project/3015069.04/code/Whist/data/oneAxon.mat';
 
 load(model_path)
+keyboard;
 dims = size(mask);
 
 % plot the WM model, the fiber volume fraction (FVF) is computed within the
@@ -57,7 +58,7 @@ model_parameters.field_direction = field_direction;
 model_parameters.mask = mask;
 
 %%%%%%%%%%%%% Simulate the field perturbation from the WM model and the multi GRE signals
-[signal_original, field] = simulateSignalFromModel_v2(oneAxon, model_parameters);
+[signal_original, field] = simulateSignalFromModel(oneAxon, model_parameters);
 
 options.new_figure = 1;
 options.mask = mask;
