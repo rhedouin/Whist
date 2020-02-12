@@ -32,17 +32,19 @@ function [signal, field] = simulateSignalFromModel(axon_collection, model_parame
 % %%%% field is the field perturbation simulated from the WM model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 gamma = 42.6;
 dims = size(model_parameters.mask);
+number_dims = ndims(model_parameters.mask);
 
-if ndims(dims) == 2
+if  number_dims == 2
     [tensor_X, model]  = create2DTensorXFromAxonList(axon_collection, dims, model_parameters.myelin.xa, model_parameters.myelin.xi);
     
     field_complex = createFieldFrom2DTensorX(tensor_X, model_parameters.B0, gamma, model_parameters.field_direction);
     field = real(field_complex);
-elseif ndims(dims) == 3
+elseif number_dims == 3
     [tensor_X, model]  = create3DTensorXFromAxonList(axon_collection, dims, model_parameters.myelin.xa, model_parameters.myelin.xi);
-    
+
     field_complex = createFieldFrom3DTensorX(tensor_X, model_parameters.B0, gamma, model_parameters.field_direction);
     field = real(field_complex);
     
@@ -71,7 +73,7 @@ for l = 1:N
     signal.myelin(l) = sum(C.myelin, 'all');
     signal.extra_axonal(l) = sum(C.extra_axonal, 'all');
 end
-
+keyboard;
 signal.intra_axonal = model_parameters.intra_axonal.weight * exp(-model_parameters.TE / model_parameters.intra_axonal.T2).* signal.intra_axonal / nb_pixel;
 signal.myelin = model_parameters.myelin.weight * exp(-model_parameters.TE / model_parameters.myelin.T2).* signal.myelin / nb_pixel;
 signal.extra_axonal = model_parameters.extra_axonal.weight * exp(-model_parameters.TE / model_parameters.extra_axonal.T2).*signal.extra_axonal / nb_pixel;

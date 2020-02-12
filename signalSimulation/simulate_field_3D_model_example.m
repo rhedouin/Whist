@@ -1,20 +1,21 @@
 % example simulate field perturbation and corresponding multi GRE signal
 clear
-close all
+% close all
 
-%%%%%%%%%%%% Load a WM model with a single axon
-model_path = '/project/3015069.04/code/Whist/data/oneAxon.mat';
+%%%%%%%%%%%% Load a WM model with a single 2D axon
+model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
+
+%%%%%%%%%%%% Load a WM model with a single 3D axon
+model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
 
 load(model_path)
-keyboard;
+number_dims = ndims(mask);
 dims = size(mask);
 
 % plot the WM model, the fiber volume fraction (FVF) is computed within the
 % mask represented by the red rectangle
 plot_model = 1;
-mask = zeros(dims);
-mask(25:75, 25:75) = 1;
-model = createModelFromData(oneAxon, mask, plot_model);
+model = createModelFromData(oneAxon, mask, 0);
 
 %%%%%%%%%%% Set parameters
 % field strength in Tesla
@@ -28,12 +29,6 @@ model_parameters.myelin.proton_density= 0.5;
 model_parameters.myelin.xi = -0.1;  % myelin anisotropic susceptibility (ppm)
 model_parameters.myelin.xa = -0.1;  % myelin isotropic susceptibility (ppm)
 
-% Relative water signal received from myelin compare to intra/extra compartment (see
-% computeRelativeWeightFromT1Effect.m)
-
-model_parameters.flip_angle = 20;
-model_parameters.TR = 60*1e-3;
-
 % intra axonal
 model_parameters.intra_axonal.T2 = 50*1e-3;
 model_parameters.intra_axonal.T1 = 1.5;
@@ -46,13 +41,17 @@ model_parameters.extra_axonal.proton_density= 0.5;
 
 % TE 
 model_parameters.TE = (2:3:59)*1e-3;
+
+% Relative water signal received from myelin compare to intra/extra compartment (see
+% computeCompartmentSignalWeight.m)
+model_parameters.flip_angle = 20;
+model_parameters.TR = 60*1e-3;
 model_parameters = computeCompartmentSignalWeight(model_parameters);
 
 % magnetic field orientation
 theta = pi/2;
-phi = pi/2;
-field_direction = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)];
-model_parameters.field_direction = field_direction;
+phi = 0;
+model_parameters.field_direction = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)];
 
 % mask
 model_parameters.mask = mask;
@@ -69,60 +68,13 @@ magn_signal = abs(signal_original.total);
 phase_signal = phase(signal_original.total);
 
 %%%%%%%%%%%%% Plot field and signals
-figure; 
-
-subplot(221)
-imagesc(field)
-
-cb = colorbar;
-
-title(cb,'Hertz');
-
-caxis([-10 10])
-title('Field perturbation', 'FontWeight', 'bold')
-set(gca, 'FontSize', 15);
-
-
-subplot(223)
-h3 = subplot(223)   ;
-axis([-2 2 -2 2 -2 2])
-CameraPosition = [5 0 0]
-view([0 90])
-
-hold on
-arrow3([0 0 0], [0 0 1],'--r',0.5,[],0)
-arrow3([0 0 0], [0 1 0],'--y',0.5,[],0)
-arrow3([0 0 0], [1 0 0],'--b',0.5,[],0)
-
-arrow3([0 0 0],field_direction,'2.5s',1,[],0)
-
-hold off, axis off, camlight left
-set(gca,'CameraViewAngle',4)
-text(1,0,0,'X'), text(0,1,0,'Y')
-text(0,0,1,'Z','VerticalAlignment','bottom',...
-    'HorizontalAlignment','center')
-
-text(-0.5,1.5,0,'B0 orientation', 'FontWeight', 'bold', 'FontSize', 12)
-set(gca, 'FontSize', 12);
-
-
-
-subplot(222)
-plot(magn_signal, 'LineWidth', 3)
-xlabel('echo time')
-ylabel('|S(t)|')
-title('Signal magnitude', 'FontWeight', 'bold')
-set(gca, 'FontSize', 12);
-
-subplot(224)
-
-plot(phase_signal, 'LineWidth', 3)
-xlabel('echo time')
-ylabel('phase(S(t))')
-
-title('Signal phase', 'FontWeight', 'bold')
-set(gca, 'FontSize', 12);
-
+if number_dims == 2
+    plot2DFieldAndSignal(field, signal_original.total, model_parameters.field_direction)
+elseif number_dims == 3
+    plot3DFieldAndSignal(field, signal_original.total, model_parameters.field_direction)
+else
+    error('dimension of the model should be 2 or 3');
+end
 
 
 

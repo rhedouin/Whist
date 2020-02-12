@@ -1,5 +1,4 @@
-function [TensorX, TotalModel,M_old] = createTensor3DXFromAxonList_FAST(axonlist,dims,xa,xi)
-
+function [TensorX, TotalModel,M_old] = create3DTensorXFromAxonList(axonlist,dims,xa,xi)
 
 % Magnetic susceptibility of myelin (isotropic and anisotropic)
 Xi = [xi 0 0; 0 xi 0; 0 0 xi];
