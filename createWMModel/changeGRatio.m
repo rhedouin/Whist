@@ -18,6 +18,8 @@ end
 stop = 0;
 it = 0;
 
+[~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 1);
+
 while stop == 0
     
     it = it+1;

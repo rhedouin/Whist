@@ -1,22 +1,24 @@
-function [axon_collection, Model, ZoomedModel] = createOne2DWMModel(axon_dictionary_path, model_params)
+function [axon_collection, model, zoomed_model] = createOne2DWMModel(axon_dictionary_path, model_params)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% Input required
 %  axon_dictionary_path   : input axon dictionary path (provided in the
 %  data folder)
  
-% %%%%%%%%%% Model_params (all optionals)
-% %%%%%%%%%% White matter model 
+% %%%%%%%%%% Input optional 
+% model_params is a structure which contain all the algorithm options describe below
+% The given values are the one set by defauts
+%
+% %%%% White matter model 
 % model_params.number_of_axons = 400;
-% model_params.dims = [1000 1000]; 
-% % dims of the original axon grid (estimated from the number of axons as
-% % well as the axon size if not provided)
-% model_params.mask = zeros(model_params.dims); 
-% model_params.mask(round(model_params.dims(1)/3):round(2*model_params.dims(1)/3), round(model_params.dims(2)/3):round(2*model_params.dims(2)/3)) = 1;
-% % the mask is the area where the fiber volume fraction (FVF) will be
-% % computed. It represents the actual final WM model after axon packing
+% % number of axons put on the original grid
+% model_params.dims = estimated from the number of axons as well as the axon size 
+% % dims of the original axon grid 
+% model_params.mask = estimated from the original fiber volume fraction (FVF)
+% % Represents the final WM model area after axon packing where the actual
+% FVF, g-ratio are estimated
 % 
-% %%%%%%%%%% Axons packing 
+% %%%% Axons packing 
 % model_params.max_FVF = 0.85;
 % % FVF value where the axon packing is stopped (it cannot be much higher than
 % % 0.85 )
@@ -24,25 +26,39 @@ function [axon_collection, Model, ZoomedModel] = createOne2DWMModel(axon_diction
 % % Max number of iteration of the axon packing (stop the axon packing if it
 % % cannot reach the max_FVF)
 % model_params.packing_speed = 0.5;
-% % The packing speed weigths the attraction/repulsion of the axons. A higher
+% % The packing speed weights the attraction/repulsion of the axons. A higher
 % % value accelerates the packing process but can create axons overlap
 % 
-% %%%%%%%%%%% Axons dispersion
+% %%%% Axons dispersion
 % model_params.expected_FVF = 0.7; 
-% %  FVF of the final WM model
+% %  FVF of the final WM model after remove or spread the axons
 % model_params.dispersion_mode = 'spread'; 
-% % Dispersion mode can be remove or spread
+% % Dispersion mode can be 
+% % - remove where the axons are randomly remove from the packed model
+% % - spread where the axons are spread from the grid center
 % model_params.tolerance = 0.001;
 % % Tolerance between expected FVF and actual FVF of the model
 % 
-% %%%%%%%%%%% Change g-ratio
+% %%%% Change g-ratio
 % model_params.expected_g_ratio = 0.6;
 % % Change the myelin thickness to reach an expected g-ratio
 % 
-% %%%%%%%%%%% Plot / save model
+% %%%% Plot / save model
 % model_params.plot_model = 1;
 % model_params.save_model = '/project/3015069.04/WM_Models/toto.mat';
 %
+% %%%%%%%%%% Outputs
+% %%%% axon_collection is a structure of the white matter model where each
+% element represent an axon with one required field
+% % - data which corresponds to the myelin sheath
+% % - Centroid (required to run this function but not to simulate field
+% perturbation)
+% optional fields: gRatio, axonEquiDiameter, myelinThickness
+%
+% %%%% Model is the final WM model where 0 is extra axonal, 1 myelin, 0.5
+% intra axonal
+% %%%% Zoomed model is the model within the mask
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Set default parameters  
@@ -78,6 +94,14 @@ if ~isfield(model_params, 'tolerance')
     model_params.tolerance = 0.1;
 end
 
+if  isfield(model_params, 'save_model')
+    % makes sure directory exists
+    a=max([find(model_params.save_model=='/'), find(model_params.save_model=='\')]);
+    if ~isfolder(model_params.save_model(1:a))
+        mkdir(model_params.save_model(1:a));
+    end    
+end
+
 % Load dictionary
 disp('load axon dictionary ...')
 load(axon_dictionary_path);
@@ -104,7 +128,7 @@ if ~isfield(model_params, 'mask')
     model_params.mask = createAdaptedMask(axon_collection, dims);
 end
 
-[Model, ZoomedModel, FVF, g_ratio] = createModelFromData(axon_collection, model_params.mask, model_params.plot_model);
+[model, zoomed_model, FVF, g_ratio] = createModelFromData(axon_collection, model_params.mask, model_params.plot_model);
 
 % Axon packing
 disp('process packing ...')
@@ -138,7 +162,7 @@ if model_params.expected_g_ratio
     disp('done')
 end
 
-[Model, ZoomedModel, FVF, g_ratio] = createModelFromData(axon_collection, model_params.mask, model_params.plot_model);
+[model, zoomed_model, FVF, g_ratio] = createModelFromData(axon_collection, model_params.mask, model_params.plot_model);
 
 % Save model
 mask = model_params.mask;
@@ -146,9 +170,8 @@ if model_params.save_model
     disp('save model ...')
     disp(model_params.save_model);
     try
-    save(model_params.save_model, 'Model', 'ZoomedModel', 'FVF', 'g_ratio', 'axon_collection', 'dims', 'mask')
+    save(model_params.save_model, 'model', 'zoomed_model', 'FVF', 'g_ratio', 'axon_collection', 'dims', 'mask')
     catch
-    
         display ('failed to save...')
     end    
     disp('done')

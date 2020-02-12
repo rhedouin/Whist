@@ -1,4 +1,4 @@
-function [tensor_X, total_model, phimap] = createTensorXFromAxonList(axonlist,dims,xa,xi)
+function [tensor_X, total_model, phimap] = create2DTensorXFromAxonList(axonlist,dims,xa,xi)
 
 total_X = zeros(dims(1),dims(2),3,3);
 
@@ -67,7 +67,6 @@ for j = 1:length(axonlist)
     end
 end
 
-% Temporary solution to avoid overlad between myelin and intra-axon, need to be improve
 total_model = min(total_model, 2);
 total_model(find(total_model)) = 1./total_model(find(total_model));
 

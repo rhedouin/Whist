@@ -7,7 +7,8 @@
 
 % A dictionary of axon shapes is provided in this software. It was
 % estimated from a spinal cord image of a dog using AxonSeg toolbox.
-% You can furnish your own axon shapes dictionary if it respects the same format. 
+% You can furnish your own axon shapes dictionary if it respects the same format 
+% (see createOne2DWMModel.m, axon_collection) 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear;
 close all;
@@ -24,15 +25,13 @@ addpath([your_folder 'createWMModel'])
 
 %%%%%%%%%% Options set with default values
 %%%%%%%%%% White matter model 
-model_params.number_of_axons = 100; % 
+model_params.number_of_axons = 400; % 
 model_params.dims = [1000 1000]; 
-% options.mask = zeros(options.dims); 
-% options.mask(round(options.dims(1)/3):round(2*options.dims(1)/3), round(options.dims(2)/3):round(2*options.dims(2)/3)) = 1;
 
 %%%%%%%%%% Axons packing 
 model_params.max_FVF = 0.6;
 model_params.max_iteration = 1000;
-model_params.packing_speed = 2;
+model_params.packing_speed = 0.5;
 
 %%%%%%%%%%% Axons dispersion
 model_params.expected_FVF = 0.1;

@@ -24,31 +24,18 @@ function [signal, field] = simulateSignalFromModel(axon_collection, model_parame
 % % B0, MRI field strength (in Tesla)
 % % field_direction, main magnetic field orientation relative to the model
 % % TE, list of echo times (in second)
-% % mask, area where the signal is estimated
-%
-% %%%%%%%%%%%%%% Outputs 
-% %%%% signal is a structure containing multi GRE signal from each
-% compartment and the total
-% %%%% field is the field perturbation simulated from the WM model
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % mask, 
+
+computeCompartmentSignalWeight
+
 
 gamma = 42.6;
 dims = size(model_parameters.mask);
 
-if ndims(dims) == 2
-    [tensor_X, model]  = create2DTensorXFromAxonList(axon_collection, dims, model_parameters.myelin.xa, model_parameters.myelin.xi);
-    
-    field_complex = createFieldFrom2DTensorX(tensor_X, model_parameters.B0, gamma, model_parameters.field_direction);
-    field = real(field_complex);
-elseif ndims(dims) == 3
-    [tensor_X, model]  = create3DTensorXFromAxonList(axon_collection, dims, model_parameters.myelin.xa, model_parameters.myelin.xi);
-    
-    field_complex = createFieldFrom3DTensorX(tensor_X, model_parameters.B0, gamma, model_parameters.field_direction);
-    field = real(field_complex);
-    
-else
-    error('unexpected number of dimension, should be 2 or 3');
-end
+[tensor_X, model]  = create2DTensorXFromAxonList(axon_collection, dims, model_parameters.myelin.xa, model_parameters.myelin.xi);
+
+field_complex = createFieldFrom2DTensorX(tensor_X, model_parameters.B0, gamma, model_parameters.field_direction);
+field = real(field_complex);
 
 N = length(model_parameters.TE);
 
