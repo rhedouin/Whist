@@ -1,53 +1,50 @@
+function out = plot3DFieldAndSignal(field, signal, field_direction)
 % plot signal and field
 
-function out = plot3DFieldAndSignal(field, signal, field_direction)
-figure; 
+h = figure('Name', 'Field perturbation and GRE signals');
+position = [10 10 1490 890];
+h.Position = position;
 
 magn_signal = abs(signal);
 phase_signal = phase(signal);
 
 dims = size(field);
-keyboard;
+
 subplot(231)
 imagesc(squeeze(field(round(dims(1)/2), :, :)))
-xlabel('x')
-ylabel('y')
+xlabel('y')
+ylabel('z')
+title(['x slice number ' num2str(round(dims(1)/2))])
+set(gca, 'FontSize', 12)
 
 cb = colorbar;
-
 title(cb,'Hertz');
-
 caxis([-10 10])
-title('Field perturbation', 'FontWeight', 'bold')
-set(gca, 'FontSize', 15);
+
 
 subplot(232)
 imagesc(squeeze(field(:, round(dims(2)/2), :)))
 xlabel('x')
 ylabel('z')
-
+title(['y slice number ' num2str(round(dims(2)/2))])
+set(gca, 'FontSize', 12)
 
 cb = colorbar;
-
 title(cb,'Hertz');
-
 caxis([-10 10])
-title('Field perturbation', 'FontWeight', 'bold')
-set(gca, 'FontSize', 15);
+
 
 subplot(233)
 imagesc(squeeze(field(:, :, round(dims(3)/2))))
-xlabel('y')
-ylabel('z')
+
+xlabel('x')
+ylabel('y')
+title(['z slice number ' num2str(round(dims(3)/2))])
+set(gca, 'FontSize', 12)
 
 cb = colorbar;
-
 title(cb,'Hertz');
-
 caxis([-10 10])
-title('Field perturbation', 'FontWeight', 'bold')
-set(gca, 'FontSize', 15);
-
 
 subplot(234)
 axis([-2 2 -2 2 -2 2])

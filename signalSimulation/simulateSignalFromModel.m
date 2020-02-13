@@ -3,51 +3,48 @@ function [signal, field] = simulateSignalFromModel(axon_collection, model_parame
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%% Inputs required
 % %%%% axon_collection is a structure of the white matter model where each
-% element represent an axon with one required field
-% % - data which corresponds to the myelin sheath
+% element represent an axon with 
+% % - required field: data which corresponds to the myelin sheath
 % % - optional fields: Centroid ,gRatio, axonEquiDiameter, myelinThickness
 %
 % %%%% model_parameters is a structure containing the parameters of the 3
 % compartments as well as the simulation scan parameter
-% % - intra_axonal : T2, weight 
-% % - extra_axonal : T2, weight
-% % - myelin : T2, weight, xi, xa
-% The weight of each compartment reflects the water signal received, it comports 
-% the water proton density and the T1 effect. 
-% If you ignore the T1 effect the weight should be set to the proton density. 
-% If you consider the T1 effect, you can call the following function to
-% compute the weights, computeCompartmentSignalWeight(model_parameters).
+% % - intra_axonal: T2, weight 
+% % - extra_axonal: T2, weight
+% % - myelin: T2, weight, xi, xa
 %
 % xi, xa are isotropic and anisotropic susceptibilities of myelin compare
-% to intra_axonal and extra_axonal compartment which are set to 0
+% to a reference (intra/extra axonal compartment by defaut)
+% weight reflects the water signal received, see computeCompartmentSignalWeight
 %
 % % B0, MRI field strength (in Tesla)
 % % field_direction, main magnetic field orientation relative to the model
 % % TE, list of echo times (in second)
 % % mask, area where the signal is estimated
 %
+ %%%%%%%%%%%%%%% Inputs optional
+% %%%% model_parameters
+% % - intra_axonal, extra_axonal: xi (set to 0 by defauts)
+
 % %%%%%%%%%%%%%% Outputs 
-% %%%% signal is a structure containing multi GRE signal from each
-% compartment and the total
+% %%%% signal is a structure containing the multi GRE signal from each
+% compartment and the total signal (sum of compartments)
 % %%%% field is the field perturbation simulated from the WM model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-gamma = 42.6;
-dims = size(model_parameters.mask);
-number_dims = ndims(model_parameters.mask);
+number_dims = length(model_parameters.dims);
 
 if  number_dims == 2
-    [tensor_X, model]  = create2DTensorXFromAxonList(axon_collection, dims, model_parameters.myelin.xa, model_parameters.myelin.xi);
+    [tensor_X, model]  = create2DTensorXFromAxonList(axon_collection, model_parameters);
     
-    field_complex = createFieldFrom2DTensorX(tensor_X, model_parameters.B0, gamma, model_parameters.field_direction);
+    field_complex = createFieldFrom2DTensorX(tensor_X, model_parameters);
     field = real(field_complex);
-elseif number_dims == 3
-    [tensor_X, model]  = create3DTensorXFromAxonList(axon_collection, dims, model_parameters.myelin.xa, model_parameters.myelin.xi);
 
-    field_complex = createFieldFrom3DTensorX(tensor_X, model_parameters.B0, gamma, model_parameters.field_direction);
-    field = real(field_complex);
+elseif number_dims == 3
+    [tensor_X, model]  = create3DTensorXFromAxonList(axon_collection, model_parameters);
     
+    field_complex = createFieldFrom3DTensorX(tensor_X, model_parameters);
+    field = real(field_complex);    
 else
     error('unexpected number of dimension, should be 2 or 3');
 end
@@ -73,7 +70,7 @@ for l = 1:N
     signal.myelin(l) = sum(C.myelin, 'all');
     signal.extra_axonal(l) = sum(C.extra_axonal, 'all');
 end
-keyboard;
+
 signal.intra_axonal = model_parameters.intra_axonal.weight * exp(-model_parameters.TE / model_parameters.intra_axonal.T2).* signal.intra_axonal / nb_pixel;
 signal.myelin = model_parameters.myelin.weight * exp(-model_parameters.TE / model_parameters.myelin.T2).* signal.myelin / nb_pixel;
 signal.extra_axonal = model_parameters.extra_axonal.weight * exp(-model_parameters.TE / model_parameters.extra_axonal.T2).*signal.extra_axonal / nb_pixel;

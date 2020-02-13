@@ -1,4 +1,4 @@
-function [hist edges] = createHistogramFieldPerturbation(Model, Field, options)
+function [hist, edges] = createHistogramFieldPerturbation(Model, Field, options)
    
     if ~exist('options', 'var')
         options.null = 1;
@@ -44,7 +44,6 @@ function [hist edges] = createHistogramFieldPerturbation(Model, Field, options)
     else
         mask = ones(size(Model));
     end
-    
     hold on
     
     listField = Field(:);
@@ -72,7 +71,7 @@ function [hist edges] = createHistogramFieldPerturbation(Model, Field, options)
             'LineWidth',LineWidth)
     end
     
-    leg = legend('intra_axonal', 'myelin', 'extra_axonal');
+    leg = legend('intra axonal', 'myelin', 'extra axonal');
     xlabel('Hz')
     title('Frequency histogram')
     

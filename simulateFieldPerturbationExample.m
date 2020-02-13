@@ -1,21 +1,26 @@
-% example simulate field perturbation and corresponding multi GRE signal
+% This example simulates field perturbation and corresponding multi GRE
+% signal from WM models
+% Two models are set provide, one 2D model (by defaut) and one 3D model
+% (that you can simply uncomment to run)
+ 
 clear
-% close all
+close all
 
 %%%%%%%%%%%% Load a WM model with a single 2D axon
 model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
 
 %%%%%%%%%%%% Load a WM model with a single 3D axon
-model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
+% model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
 
 load(model_path)
+
 number_dims = ndims(mask);
-dims = size(mask);
+model_parameters.dims = size(mask);
 
 % plot the WM model, the fiber volume fraction (FVF) is computed within the
 % mask represented by the red rectangle
 plot_model = 1;
-model = createModelFromData(oneAxon, mask, 0);
+[model, zoomed_model, FVF, g_ratio] = createModelFromData(oneAxon, mask, 1);
 
 %%%%%%%%%%% Set parameters
 % field strength in Tesla
@@ -32,12 +37,14 @@ model_parameters.myelin.xa = -0.1;  % myelin isotropic susceptibility (ppm)
 % intra axonal
 model_parameters.intra_axonal.T2 = 50*1e-3;
 model_parameters.intra_axonal.T1 = 1.5;
-model_parameters.intra_axonal.proton_density= 0.5; 
+model_parameters.intra_axonal.proton_density= 1; 
+model_parameters.intra_axonal.xi= 0; 
 
 % extra axonal
 model_parameters.extra_axonal.T2 = 50*1e-3;
 model_parameters.extra_axonal.T1 = 1.5;
-model_parameters.extra_axonal.proton_density= 0.5; 
+model_parameters.extra_axonal.proton_density= 1; 
+model_parameters.extra_axonal.xi= 0; 
 
 % TE 
 model_parameters.TE = (2:3:59)*1e-3;
@@ -46,6 +53,11 @@ model_parameters.TE = (2:3:59)*1e-3;
 % computeCompartmentSignalWeight.m)
 model_parameters.flip_angle = 20;
 model_parameters.TR = 60*1e-3;
+
+model_parameters.include_proton_density = 1;
+model_parameters.include_T1_effect = 0;
+
+
 model_parameters = computeCompartmentSignalWeight(model_parameters);
 
 % magnetic field orientation
