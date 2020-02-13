@@ -1,4 +1,5 @@
 function TotalField = createFieldFrom2DTensorX(tensor_X, model_parameters)
+% Create field perturbation from 2D susceptibility tensor (see Tianyou Xu 2018)
 
 gamma = 42.6;
 

@@ -1,5 +1,27 @@
 function [Model, ZoomedModel, FVF, g_ratio] = createModelFromData(axonCollection, mask, plot_model)
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This function creates the WM model from the axonCollection.
+%
+% %%%%%%%%%%%%%% Inputs
+% %%%% axon_collection is a structure of the white matter model where each
+% element represent an axon with 
+% % - data: corresponds to the myelin sheath
+% % - intraAxon:  corresponds to the intra axonal (only required for 3D)
+%
+% %%%% The mask need to correspond to the axonCollection as it also
+% contains the dimension of the model
+% If you plot the model, it is represented with the red rectangle for 2D models and with a
+% different color for 3D models (as it is more common to have a complex mask
+% shape for a 3D model to ensure a FVF high enough)
+%
+% %%%%%%%% Outputs
+% ZoomedModel represents the model within the mask area, it is only relevant if
+% the mask is a rectangle or a cuboid
+% The fiber volume fraction (FVF) and g-ratio are computed within the mask
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 dims = size(mask);
 number_dims = ndims(mask);
 
@@ -27,7 +49,6 @@ if number_dims == 2
     Model(myelin_index) = 1;
     Model(axon_index)   = 0.5;
     
-    keyboard;
     ZoomedModel = Model(mask_min_x:mask_max_x, mask_min_y:mask_max_y);
     
     AVF = length(find(Model == 0.5));
@@ -119,4 +140,5 @@ elseif number_dims == 3
         set(gca, 'FontSize', 12)
 
     end
+    Model(mask == 0) = 0;
 end

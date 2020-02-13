@@ -1,4 +1,5 @@
 function [tensor_X, total_model, phimap] = create2DTensorXFromAxonList(axonlist,model_params)
+% Create 2D susceptibility tensor (see Tianyou Xu 2018)
 
 total_X = zeros(model_params.dims(1),model_params.dims(2),3,3);
 
