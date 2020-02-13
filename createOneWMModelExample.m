@@ -16,25 +16,23 @@ close all;
 %%%%%%%%%% Set parameters
 %%%%%%%%%% Required
 
-your_folder = '/project/3015069.04/code/Whist/'; 
-% your_folder = [pwd,'/']; 
+your_folder = [pwd,'/']; 
 % location of the toolbox
 axon_dictionary_path = [your_folder 'data/axonMediumDict.mat'];
 addpath([your_folder 'createWMModel'])
 % axon dictionary path
 
-%%%%%%%%%% Options set with default values
+%%%%%%%%%% Options 
 %%%%%%%%%% White matter model 
-model_params.number_of_axons = 400; % 
-model_params.dims = [1000 1000]; 
-
+model_params.number_of_axons = 100; % 
+% 
 %%%%%%%%%% Axons packing 
-model_params.max_FVF = 0.6;
-model_params.max_iteration = 1000;
-model_params.packing_speed = 0.5;
-
+model_params.max_FVF = 0.8;
+model_params.max_iteration = 5000;
+model_params.packing_speed = 1;
+% 
 %%%%%%%%%%% Axons dispersion
-model_params.expected_FVF = 0.1;
+model_params.expected_FVF = 0.5;
 model_params.dispersion_mode = 'spread'; 
 model_params.tolerance = 0.01;
 
@@ -43,9 +41,10 @@ model_params.expected_g_ratio = 0.5;
 
 %%%%%%%%%%% Plot / save
 model_params.plot_model = 1;
-model_params.save_model = [your_folder 'WMmodel/Toto.mat'];
+model_params.save_model = [your_folder 'WMmodel/MyWMModel.mat'];
 
 [axon_collection, Model, ZoomedModel] = createOne2DWMModel(axon_dictionary_path, model_params);
+
 
 
 

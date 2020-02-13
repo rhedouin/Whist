@@ -7,9 +7,11 @@ mean_g_ratio = mean(g_list);
 
 pdf_list = cat(1,(axon_collection(:).axonEquivDiameter)).^2;
 
-if (mean_g_ratio > expected_g_ratio)
+[~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 1);
+
+if (surface_g_ratio > expected_g_ratio)
     mode = 'extend';
-elseif (mean_g_ratio < expected_g_ratio)
+elseif (surface_g_ratio < expected_g_ratio)
     mode = 'shrink';
 else
     error('Expected GRatio');
@@ -18,14 +20,9 @@ end
 stop = 0;
 it = 0;
 
-[~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 1);
-
 while stop == 0
-    
     it = it+1;
-    
-    display(['mean g-ratio : ' num2str(mean_g_ratio)]);
-    display(['surface g-ratio : ' num2str(surface_g_ratio)]);
+    display(['global g-ratio : ' num2str(surface_g_ratio)]);
     
     cdf_list = cumsum([0; pdf_list]);
     if (cdf_list(end) == 0)
@@ -74,7 +71,8 @@ while stop == 0
                 g_list(k) = current_g_ratio;
                 
                 mean_g_ratio = mean(g_list);
-                if (mean_g_ratio < expected_g_ratio)
+
+                if (surface_g_ratio < expected_g_ratio)
                     stop = 1;
                 end
             else
@@ -107,13 +105,15 @@ while stop == 0
             
             axon_collection(k).gRatio = current_g_ratio;
             g_list(k) = current_g_ratio;
-            
+             
+            [~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 1);
+                     
             if (length(current_myelin_index) == length(bound_index))
                 pdf_list(k) = 0;
             end
             
             mean_g_ratio = mean(g_list);
-            if (mean_g_ratio > expected_g_ratio)
+            if (surface_g_ratio > expected_g_ratio)
                 stop = 1;
             end
     end  

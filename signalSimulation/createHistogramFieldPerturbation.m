@@ -4,8 +4,8 @@ function [hist, edges] = createHistogramFieldPerturbation(Model, Field, options)
         options.null = 1;
     end
 
-    if isfield(options, 'new_figure')
-        figure;
+    if ~isfield(options, 'keep_figure')
+        h = figure('Name', 'Frequency histogram');
     else 
         hold on
     end

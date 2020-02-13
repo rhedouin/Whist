@@ -1,7 +1,9 @@
+function out = plot2DFieldAndSignal(field, signal, field_direction)
 % plot signal and field
 
-function out = plot2DFieldAndSignal(field, signal, field_direction)
-figure; 
+h = figure('Name', 'Field perturbation and GRE signals');
+position = [10 10 1090 890];
+h.Position = position;
 
 magn_signal = abs(signal);
 phase_signal = phase(signal);

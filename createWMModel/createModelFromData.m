@@ -51,12 +51,11 @@ if number_dims == 2
     
     ZoomedModel = Model(mask_min_x:mask_max_x, mask_min_y:mask_max_y);
     
-    AVF = length(find(Model == 0.5));
-    MVF = length(find(Model == 1));
+    AVF = length(find(Model.*mask == 0.5));
+    MVF = length(find(Model.*mask == 1));
     
     FVF = (AVF + MVF) / sum(mask, 'all');
     g_ratio = sqrt(AVF / (AVF + MVF));
-    
     if plot_model
         imagesc(Model);
         hold on
@@ -68,7 +67,7 @@ if number_dims == 2
             set(gca, 'FontSize', 12)
         end
     end
-    
+
 elseif number_dims == 3
     
     mask_ind = find(mask);
@@ -101,8 +100,8 @@ elseif number_dims == 3
     
     ZoomedModel = Model(mask_min_x:mask_max_x, mask_min_y:mask_max_y, mask_min_z:mask_max_z);
     
-    AVF = length(find(Model == 0.5));
-    MVF = length(find(Model == 1));
+    AVF = length(find(Model.*mask == 0.5));
+    MVF = length(find(Model.*mask == 1));
     
     FVF = (AVF + MVF) / sum(mask, 'all');
     g_ratio = sqrt(AVF / (AVF + MVF));

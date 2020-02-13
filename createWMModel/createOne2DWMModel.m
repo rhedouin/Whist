@@ -67,7 +67,7 @@ if ~exist('model_params')
 end
 
 if ~isfield(model_params, 'max_FVF')
-    model_params.max_FVF = 0.85;
+    model_params.max_FVF = 0.8;
 end
 
 if ~isfield(model_params, 'max_iteration')
@@ -137,28 +137,27 @@ disp('done')
 disp(['FVF packed model : ' num2str(FVF_packed_model)]);
 
 % Axon dispersion (optional)
-if model_params.expected_FVF
+if isfield(model_params, 'expected_FVF')
     if (model_params.dispersion_mode == 'remove')
         disp('remove axons ...')
         [axon_collection, FVF] = removeAxons(axon_collection, model_params.expected_FVF, model_params.tolerance, model_params.mask, model_params.plot_model);
     elseif (model_params.dispersion_mode == 'spread')
         disp('spread axons ...')
         [axon_collection, FVF] = repulseAxons(axon_collection, model_params.expected_FVF, model_params.tolerance, model_params.mask, model_params.plot_model);
-        axon_collection = avoidAxonOverlap(axon_collection, dims);
     else
         error('dispersion mode should be remove or spread');
     end
     disp(['current FVF : ' num2str(FVF)]);
     disp('done')
 end
-
+% Avoid axon overlap
+axon_collection = avoidAxonOverlap(axon_collection, dims);
 axon_collection = convertAxonDataToRoundValues(axon_collection);
-axon_collection_save = axon_collection;
 
 % Change g-ratio (optional)
-if model_params.expected_g_ratio
+if isfield(model_params, 'expected_g_ratio')
     disp('change g ratio ...')
-    axon_collection = changeGRatio(axon_collection_save, model_params.expected_g_ratio, model_params.mask);
+    axon_collection = changeGRatio(axon_collection, model_params.expected_g_ratio, model_params.mask);
     disp('done')
 end
 

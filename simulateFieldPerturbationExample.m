@@ -7,11 +7,16 @@
 clear
 close all
 
+your_folder = [pwd,'/']; 
+% location of the toolbox
+addpath(genpath(your_folder))
+
 %%%%%%%%%%%% Load a WM model with a single 2D axon
+model_path = '/project/3015069.04/code/Whist/WMmodel/MyWMmodel.mat';
 % model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
 
 %%%%%%%%%%%% Load a WM model with a single 3D axon
-model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
+% model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
 
 load(model_path)
 
@@ -20,7 +25,7 @@ model_parameters.dims = size(mask);
 
 plot_model = 1;
 % Create and plot your model
-[model, zoomed_model, FVF, g_ratio] = createModelFromData(oneAxon, mask, 1);
+[model, zoomed_model, FVF, g_ratio] = createModelFromData(axon_collection, mask, 1);
 
 %%%%%%%%%%% Set parameters
 % mask (required)
@@ -68,10 +73,9 @@ model_parameters.include_T1_effect = 1;
 model_parameters = computeCompartmentSignalWeight(model_parameters);
 
 %%%%%%%%%% Simulate the field perturbation from the WM model and the multi GRE signals
-[signal_original, field] = simulateSignalFromModel(oneAxon, model_parameters);
+[signal_original, field] = simulateSignalFromModel(axon_collection, model_parameters);
 
 %%%%%%%%%% Plot frequency histogramm, field and signals
-options.new_figure = 1;
 options.mask = mask;
 
 createHistogramFieldPerturbation(model, field, options);
