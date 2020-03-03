@@ -1,5 +1,7 @@
-function TotalField = createFieldFrom2DTensorX(tensor_X,B0,gamma,H_Vec)
-% From ApplySTI in COSMOS_STI_Toolbox
+function TotalField = createFieldFrom2DTensorX(tensor_X, model_parameters)
+% Create field perturbation from 2D susceptibility tensor (see Tianyou Xu 2018)
+
+gamma = 42.6;
 
 dims = size(tensor_X);
 [kx,ky] = ndgrid(-dims(1)/2:dims(1)/2-1, -dims(2)/2:dims(2)/2-1);
@@ -17,6 +19,8 @@ for j = 1:6
     Fx(:,:,j) = fftn(tensor_X(:,:,j));
 end
 
+H_Vec = model_parameters.field_direction;
+
 kH_over_k2 = (H_Vec(1) * kx + H_Vec(2) * ky) ./ (eps + k2);
 
 Res =       ((H_Vec(1)^2)/3 - H_Vec(1)*kx .* kH_over_k2) .* Fx(:,:,1) + ...                         %   Fx11 
@@ -27,5 +31,5 @@ Res =       ((H_Vec(1)^2)/3 - H_Vec(1)*kx .* kH_over_k2) .* Fx(:,:,1) + ...     
     (H_Vec(3)^2)/3.* Fx(:,:,6);        %   Fx33
 
 TotalField = ifftn(Res);
-TotalField = TotalField*gamma*B0;
+TotalField = TotalField*gamma*model_parameters.B0;
 end

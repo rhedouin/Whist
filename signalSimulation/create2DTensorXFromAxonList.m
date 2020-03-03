@@ -1,73 +1,89 @@
-function [tensor_X, total_model, phimap] = createTensorXFromAxonList(axonlist,dims,xa,xi)
+function [tensor_X, total_model, phimap] = create2DTensorXFromAxonList(axonlist,model_parameters)
+% Create 2D susceptibility tensor (see Tianyou Xu 2018)
 
-total_X = zeros(dims(1),dims(2),3,3);
+total_X = zeros(model_parameters.dims(1),model_parameters.dims(2),3,3);
 
-Xi = [xi 0 0; 0 xi 0; 0 0 xi];
-Xa = [xa 0 0; 0 -xa/2 0; 0 0 -xa/2];
+myelin_Xi = [model_parameters.myelin.xi 0 0; 0 model_parameters.myelin.xi 0; 0 0 model_parameters.myelin.xi];
+myelin_Xa = [model_parameters.myelin.xa 0 0; 0 -model_parameters.myelin.xa/2 0; 0 0 -model_parameters.myelin.xa/2];
 
-total_model = zeros(dims);
-phimap = zeros(dims);
+if (isfield(model_parameters, 'intra_axonal') && isfield(model_parameters.intra_axonal, 'xi')) 
+    intra_axonal_Xi = [model_parameters.intra_axonal.xi 0 0; 0 model_parameters.intra_axonal.xi 0; 0 0 model_parameters.intra_axonal.xi];
+end
+
+if (isfield(model_parameters, 'extra_axonal') && isfield(model_parameters.extra_axonal, 'xi')) 
+    extra_axonal_Xi = [model_parameters.extra_axonal.xi 0 0; 0 model_parameters.extra_axonal.xi 0; 0 0 model_parameters.extra_axonal.xi];
+    total_X = permute(repmat(extra_axonal_Xi, [1 1 model_parameters.dims]), [3 4 1 2]);
+end
+
+total_model = zeros(model_parameters.dims);
+phimap = zeros(model_parameters.dims);
 compute_phimap = 1;
 
 grad_threshold = 0.0001;
 
 for j = 1:length(axonlist)
-    %% From Wharton 12        
-    map = zeros(dims);
-    ind_myelin = axonlist(j).data;
-    ind_axon = myelin2axon(ind_myelin);
 
-    sub_myelin = sub2ind(dims,ind_myelin(:,1),ind_myelin(:,2));  
-    sub_axon = sub2ind(dims,ind_axon(:,1),ind_axon(:,2));    
+    map = zeros(model_parameters.dims);
+    sub_myelin = axonlist(j).data;
+    sub_intra_axonal = myelin2axon(sub_myelin);
+
+    ind_myelin = sub2ind(model_parameters.dims,sub_myelin(:,1),sub_myelin(:,2));  
+    ind_intra_axonal = sub2ind(model_parameters.dims,sub_intra_axonal(:,1),sub_intra_axonal(:,2));    
  
-    min_ind_myelin = min(ind_myelin);
-    max_ind_myelin = max(ind_myelin);
+    min_sub_myelin = min(sub_myelin);
+    max_sub_myelin = max(sub_myelin);
     
     extra_space = 10;   
-    small_map_dims = max_ind_myelin - min_ind_myelin + 2*extra_space;
+    small_map_model_parameters.dims = max_sub_myelin - min_sub_myelin + 2*extra_space;
     
-    new_ind_myelin = ind_myelin - min_ind_myelin + extra_space;
-    new_ind_axon = myelin2axon(new_ind_myelin);
+    new_sub_myelin = sub_myelin - min_sub_myelin + extra_space;
+    new_sub_intra_axonal = myelin2axon(new_sub_myelin);
 
-    new_sub_myelin = sub2ind(small_map_dims,new_ind_myelin(:,1),new_ind_myelin(:,2));  
-    new_sub_axon = sub2ind(small_map_dims,new_ind_axon(:,1),new_ind_axon(:,2));    
+    new_ind_myelin = sub2ind(small_map_model_parameters.dims,new_sub_myelin(:,1),new_sub_myelin(:,2));  
+    new_ind_axon = sub2ind(small_map_model_parameters.dims,new_sub_intra_axonal(:,1),new_sub_intra_axonal(:,2));    
     
-    small_map = zeros(small_map_dims);
-    small_map(new_sub_myelin) = 1;
-    small_map(new_sub_axon) = 2;
+    small_map = zeros(small_map_model_parameters.dims);
+    small_map(new_ind_myelin) = 1;
+    small_map(new_ind_axon) = 2;
     
-    map(sub_myelin) = 1;
-    map(sub_axon) = 2;   
+    map(ind_myelin) = 1;
+    map(ind_intra_axonal) = 2;   
 
     total_model = total_model + map;
-
 
     sigma=2;
     
     smooth_small_map = imgaussfilt(small_map,sigma, 'FilterSize',5);   
     [gradient_magnitude,gradient_direction] = imgradient(smooth_small_map);
-    c=1; 
-    while sum(gradient_magnitude(new_sub_myelin) <= grad_threshold) > 0 && c<20
-        smooth_small_map = imgaussfilt(smooth_small_map,sigma, 'FilterSize',5);  
+    
+    % Counting variable for smoothing process
+    c=1;
+    while sum(gradient_magnitude(new_ind_myelin) <= grad_threshold) > 0 && c<20
+        smooth_small_map = imgaussfilt(smooth_small_map,sigma, 'FilterSize',5);
         [gradient_magnitude, gradient_direction] = imgradient(smooth_small_map);
         c=c+1;
     end
     
     gradient_direction = (pi/180)*(gradient_direction + 90);
 
-    for k = 1:size(new_ind_myelin,1)
-        phi = mod(gradient_direction(new_ind_myelin(k,1),new_ind_myelin(k,2)) + 2*pi, 2*pi) - pi;
+    for k = 1:size(new_sub_myelin,1)
+        phi = mod(gradient_direction(new_sub_myelin(k,1),new_sub_myelin(k,2)) + 2*pi, 2*pi) - pi;
 
         R = [cos(phi) -sin(phi) 0; sin(phi) cos(phi) 0; 0 0 1];
-        total_X(ind_myelin(k,1),ind_myelin(k,2),:,:) = Xi+R*Xa*inv(R);
+        total_X(sub_myelin(k,1),sub_myelin(k,2),:,:) = myelin_Xi + R*myelin_Xa*inv(R);
         
         if compute_phimap
-            phimap(ind_myelin(k,1),ind_myelin(k,2)) = angle( exp(1i*phi) );
+            phimap(sub_myelin(k,1),sub_myelin(k,2)) = angle( exp(1i*phi) );
+        end
+    end
+    
+    if (isfield(model_parameters, 'intra_axonal') && isfield(model_parameters.intra_axonal, 'xi'))
+        for k = 1:size(sub_intra_axonal,1)
+            total_X(sub_intra_axonal(k,1),sub_intra_axonal(k,2),:,:) = intra_axonal_Xi;
         end
     end
 end
 
-% Temporary solution to avoid overlad between myelin and intra-axon, need to be improve
 total_model = min(total_model, 2);
 total_model(find(total_model)) = 1./total_model(find(total_model));
 
@@ -77,5 +93,10 @@ tensor_X(:,:,3) = total_X(:,:,1,3);
 tensor_X(:,:,4) = total_X(:,:,2,2);
 tensor_X(:,:,5) = total_X(:,:,2,3);
 tensor_X(:,:,6) = total_X(:,:,3,3);
+
+if ~isfield(model_parameters, 'mask_tensor_map') || model_parameters.mask_tensor_map == 1
+    mask_replic = repmat(model_parameters.mask,[1 1 6]);
+    tensor_X(~mask_replic) = 0;
+end
 
 end

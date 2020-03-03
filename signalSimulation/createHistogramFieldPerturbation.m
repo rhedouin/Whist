@@ -1,23 +1,23 @@
-function [hist edges] = createHistogramFieldPerturbation(Model, Field, options)
+function [hist, edges] = createHistogramFieldPerturbation(Model, Field, options)
    
     if ~exist('options', 'var')
         options.null = 1;
     end
 
-    if isfield(options, 'new_figure')
-        figure;
+    if ~isfield(options, 'keep_figure')
+        h = figure('Name', 'Frequency histogram');
     else 
         hold on
     end
     
     if isfield(options, 'edges')
-        edges.intra = options.edges.intra;
+        edges.intra_axonal = options.edges.intra_axonal;
         edges.myelin = options.edges.myelin;
-        edges.extra = options.edges.extra;
+        edges.extra_axonal = options.edges.extra_axonal;
     else
-        edges.intra = [-15 : 0.5 : 5];
-        edges.myelin = [-10 : 0.5 : 20];
-        edges.extra = [-10 : 0.5 : 10];
+        edges.intra_axonal = (-15 : 0.5 : 5);
+        edges.myelin = (-10 : 0.5 : 20);
+        edges.extra_axonal = (-10 : 0.5 : 10);
     end
     
     if isfield(options, 'line_style')
@@ -44,39 +44,36 @@ function [hist edges] = createHistogramFieldPerturbation(Model, Field, options)
     else
         mask = ones(size(Model));
     end
-    
     hold on
     
     listField = Field(:);
     
-    colorValues = linspecer(3);
-
-    
     nb_pixels = sum(mask(:));
 
-    [hist.intra, edges.intra] = histcounts(listField(Model == 0.5),edges.intra);
-    hist.intra = hist.intra/nb_pixels;
+    [hist.intra_axonal, edges.intra_axonal] = histcounts(listField(Model == 0.5),edges.intra_axonal);
+    hist.intra_axonal = hist.intra_axonal/nb_pixels;
     
     [hist.myelin, edges.myelin] = histcounts(listField(Model == 1),edges.myelin);
     hist.myelin = hist.myelin/nb_pixels;
     
-    [hist.extra, edges.extra] = histcounts(listField(Model == 0),edges.extra);
-    hist.extra = hist.extra/nb_pixels;
+    [hist.extra_axonal, edges.extra_axonal] = histcounts(listField(Model == 0),edges.extra_axonal);
+    hist.extra_axonal = hist.extra_axonal/nb_pixels;
     
        
     if plot_hist
-        plot(edges.intra(1:end-1),hist.intra , line_style, 'color', colorValues(1,:), ...
+        plot(edges.intra_axonal(1:end-1),hist.intra_axonal , [line_style 'r'], ...
             'LineWidth',LineWidth)
         
-        plot(edges.myelin(1:end-1),hist.myelin , line_style, 'color', colorValues(2,:), ...
+        plot(edges.myelin(1:end-1),hist.myelin , [line_style 'b'], ...
             'LineWidth',LineWidth)
         
-        plot(edges.extra(1:end-1), hist.extra, line_style, 'color', colorValues(3,:), ...
+        plot(edges.extra_axonal(1:end-1), hist.extra_axonal, [line_style 'g'], ...
             'LineWidth',LineWidth)
     end
     
-    leg = legend('intra', 'myelin', 'extra')
+    leg = legend('intra axonal', 'myelin', 'extra axonal');
     xlabel('Hz')
+    title('Frequency histogram')
     
     if isfield(options, 'xlim')
         xlim(options.xlim);

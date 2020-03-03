@@ -1,6 +1,7 @@
-function TotalField = createFieldFromTensorX2D(kx,ky,k2,Fx,B0,gamma,H_Vec)
+function TotalField = createFieldFromTensorX2D(kx,ky,k2,Fx,B0,H_Vec)
 % From ApplySTI in COSMOS_STI_Toolbox
 %%%% Short version
+gamma = 42.6;
 
 kH_over_k2 = (H_Vec(1) * kx + H_Vec(2) * ky) ./ (eps + k2);
 

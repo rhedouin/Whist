@@ -1,13 +1,13 @@
-function out = createDictionaryPartSignalMultiModalities(signal_path, output_folder, experience_name, T2myelRange, T2outRange, weightRange, nb_TE, noise, FVF, nb_orientations, replic, dict_options)
+function out = createDictionaryPartSignalMultiModalities(signal_path, output_folder, experience_name, T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF, nb_orientations, replic, dict_options)
 load(signal_path); 
-time = time(1:nb_TE); 
+TE = TE(1:nb_TE); 
 
 lgRatio = length(gRatioRange); 
-lXi = length(xiRange); 
-lXa = length(xaRange); 
+lXiMyelin = length(xiMyelinRange); 
+lXaMyelin = length(xaMyelinRange); 
 lDir = size(fiber_directions,1);
-lT2myel = length(T2myelRange);
-lT2out = length(T2outRange);
+lT2Myelin = length(T2MyelinRange);
+lT2IntraExtraAxonal = length(T2IntraExtraAxonalRange);
 lWeight = length(weightRange); 
 
 if dict_options.include_theta
@@ -24,33 +24,33 @@ for kCoordinate = 1:length(coordinate_total_list)
     if dict_options.coordinate.(coordinate_total_list{kCoordinate}) == 1
         it = it + 1;
         coordinate_list{it} = coordinate_total_list{kCoordinate};
-        SignalValuesMultiCoordinates.(coordinate_list{it}) = zeros(lVec, lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
+        SignalValuesMultiCoordinates.(coordinate_list{it}) = zeros(lVec, lgRatio, lXiMyelin, lXaMyelin, lDir, lT2Myelin, lT2IntraExtraAxonal, lWeight, 'single');
     end
 end
 lCoordinate = length(coordinate_list);
 
-gRatioValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-xiValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-xaValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-T2myelValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-T2outValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-weightValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-directionsValues = zeros(3,lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
-thetaValues = zeros(lgRatio, lXi, lXa, lDir, lT2myel, lT2out, lWeight, 'single');
+gRatioValues = zeros(lgRatio, lXiMyelin, lXaMyelin, lDir, lT2Myelin, lT2IntraExtraAxonal, lWeight, 'single');
+xiMyelinValues = zeros(lgRatio, lXiMyelin, lXaMyelin, lDir, lT2Myelin, lT2IntraExtraAxonal, lWeight, 'single');
+xaMyelinValues = zeros(lgRatio, lXiMyelin, lXaMyelin, lDir, lT2Myelin, lT2IntraExtraAxonal, lWeight, 'single');
+T2MyelinValues = zeros(lgRatio, lXiMyelin, lXaMyelin, lDir, lT2Myelin, lT2IntraExtraAxonal, lWeight, 'single');
+T2IntraExtraAxonalValues = zeros(lgRatio, lXiMyelin, lXaMyelin, lDir, lT2Myelin, lT2IntraExtraAxonal, lWeight, 'single');
+weightValues = zeros(lgRatio, lXiMyelin, lXaMyelin, lDir, lT2Myelin, lT2IntraExtraAxonal, lWeight, 'single');
+directionsValues = zeros(3,lgRatio, lXiMyelin, lXaMyelin, lDir, lT2Myelin, lT2IntraExtraAxonal, lWeight, 'single');
+thetaValues = zeros(lgRatio, lXiMyelin, lXaMyelin, lDir, lT2Myelin, lT2IntraExtraAxonal, lWeight, 'single');
 
 tic()
 for l = 1:lgRatio
     gRatio = gRatioRange(l)
-    for m = 1:lXi
-        xi = xiRange(m)
-        for n = 1:lXa
-            xa = xaRange(n)
+    for m = 1:lXiMyelin
+        xiMyelin = xiMyelinRange(m)
+        for n = 1:lXaMyelin
+            xaMyelin = xaMyelinRange(n)
             tic()
             for o = 1:lDir
-                for p = 1:lT2myel
-                    T2myel = T2myelRange(p);
-                    for q = 1:lT2out
-                        T2out = T2outRange(q);
+                for p = 1:lT2Myelin
+                    T2Myelin = T2MyelinRange(p);
+                    for q = 1:lT2IntraExtraAxonal
+                        T2IntraExtraAxonal = T2IntraExtraAxonalRange(q);
                         for r = 1:lWeight
                             weight = weightRange(r);
                             
@@ -60,10 +60,10 @@ for l = 1:lgRatio
                             end
                                                         
                             for rot = 1:nb_orientations
-                                Signal0 = SignalComponent(l,m,n,o,rot);
+                                Signal0 = signal_components(l,m,n,o,rot);
 
-                                SignalWithR2 = exp(-time/T2out).*Signal0.Axon(1:nb_TE) + weight*exp(-time/T2myel).*Signal0.Myelin(1:nb_TE) + ...
-                                               exp(-time/T2out).*Signal0.Extra(1:nb_TE);
+                                SignalWithR2 = exp(-TE/T2IntraExtraAxonal).*Signal0.intra_axonal.signal(1:nb_TE) + weight*exp(-TE/T2Myelin).*Signal0.myelin.signal(1:nb_TE) + ...
+                                               exp(-TE/T2IntraExtraAxonal).*Signal0.extra_axonal.signal(1:nb_TE);
                                 SignalWithR2 = SignalWithR2 / abs(SignalWithR2(1));
                                 SignalWithR2 = SignalWithR2 + noise*(randn(1,nb_TE) + 1i*randn(1,nb_TE));
                                 SignalWithR2 = SignalWithR2 / abs(SignalWithR2(1));
@@ -77,7 +77,7 @@ for l = 1:lgRatio
                                 
                                 norm_magn =  abs(SignalWithR2);
                                 phase = angle(SignalWithR2);
-                                norm_phase = phase - phase(1) - (phase(2)-phase(1))*(time - time(1))/(time(2) - time(1));
+                                norm_phase = phase - phase(1) - (phase(2)-phase(1))*(TE - TE(1))/(TE(2) - TE(1));
           
                                 if dict_options.coordinate.classic_polar
                                     tempSignalVector.classic_polar((rot-1)*length_one_orientation + 1 : rot*length_one_orientation) = [theta_noisy norm_magn norm_phase];
@@ -91,8 +91,8 @@ for l = 1:lgRatio
                                 end
                                 
                                 if (dict_options.coordinate.polyfit_polar || dict_options.coordinate.polyfit_cartesian || dict_options.coordinate.polyfit_cartesian_demean)
-                                    poly_coeff = polyfit(time, phase, 1);
-                                    norm_phase_polyfit = phase - (time*poly_coeff(1) + poly_coeff(2));
+                                    poly_coeff = polyfit(TE, phase, 1);
+                                    norm_phase_polyfit = phase - (TE*poly_coeff(1) + poly_coeff(2));
    
                                     if dict_options.coordinate.polyfit_polar 
                                          tempSignalVector.polyfit_polar((rot-1)*length_one_orientation + 1 : rot*length_one_orientation) = [theta_noisy  norm_magn norm_phase_polyfit];
@@ -119,18 +119,18 @@ for l = 1:lgRatio
                                 
                             end
 
-                            main_direction = SignalComponent(l,m,n,o,6).current_dir;
+                            main_direction = signal_components(l,m,n,o,6).current_dir;
 
                             for kCoordinate = 1:lCoordinate
                                 coordinate = coordinate_list{kCoordinate};
                                 SignalValuesMultiCoordinates.(coordinate)(:,l,m,n,o,p,q,r) = tempSignalVector.(coordinate);
                             end
                             
-                            gRatioValues(l,m,n,o,p,q,r) = Signal0.gRatio;
-                            xiValues(l,m,n,o,p,q,r) = xi;
-                            xaValues(l,m,n,o,p,q,r) = xa;
-                            T2myelValues(l,m,n,o,p,q,r) = T2myel;
-                            T2outValues(l,m,n,o,p,q,r) = T2out;
+                            gRatioValues(l,m,n,o,p,q,r) = Signal0.g_ratio;
+                            xiMyelinValues(l,m,n,o,p,q,r) = xiMyelin;
+                            xaMyelinValues(l,m,n,o,p,q,r) = xaMyelin;
+                            T2MyelinValues(l,m,n,o,p,q,r) = T2Myelin;
+                            T2IntraExtraAxonalValues(l,m,n,o,p,q,r) = T2IntraExtraAxonal;
                             weightValues(l,m,n,o,p,q,r) = weight;
                             directionsValues(:,l,m,n,o,p,q,r) = main_direction;
                             thetaValues(l,m,n,o,p,q,r) = acos(abs(main_direction(3)));
@@ -147,7 +147,7 @@ toc()
 
 gRatio = gRatioRange/100;
 
-infoDico = 'In order, gRatio, xi, dir, T2myel, T2out, weight';
+infoDico = 'In order, gRatio, xiMyelin, xaMyelin, dir, T2Myelin, T2IntraExtraAxonal, weight';
 infoSignal = ['concatenation of ' num2str(nb_orientations) ' rotations each composed of the theta angle (B0 angle) 12 TE real and imag part of the signal with a polyfit normalization phase'];
 
 if noise == 0.005
@@ -172,9 +172,9 @@ for kCoordinate = 1:lCoordinate
     SignalValues = single(SignalValuesMultiCoordinates.(coordinate));
     
     save([output_folder '/' signal_name], 'SignalValues', ...
-     'gRatioRange', 'xiRange', 'xaRange', 'T2myelRange','T2outRange','weightRange', ...
-    'gRatioValues', 'xiValues', 'xaValues', 'T2myelValues', 'T2outValues', 'directionsValues', 'thetaValues', ...
-    'weightValues', 'time', 'infoDico', 'infoSignal', 'sphere_rotations', '-v7.3')
+     'gRatioRange', 'xiMyelinRange', 'xaMyelinRange', 'T2MyelinRange','T2IntraExtraAxonalRange','weightRange', ...
+    'gRatioValues', 'xiMyelinValues', 'xaMyelinValues', 'T2MyelinValues', 'T2IntraExtraAxonalValues', 'directionsValues', 'thetaValues', ...
+    'weightValues', 'TE', 'infoDico', 'infoSignal', 'sphere_rotations', '-v7.3')
 
 end
 out = 0;

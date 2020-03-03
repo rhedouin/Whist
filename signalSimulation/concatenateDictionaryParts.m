@@ -2,9 +2,9 @@ clear
 % close all
 
 base_folder = '/project/3015069.04/';
-dico_folder = [base_folder 'dictionaries/multi_orientations/Porcine2/without_dispersion/'];
+dico_folder = [base_folder 'dictionaries/multi_orientations/Porcine2/fix_xa_large_FVF_single_direction_tensor_mask/'];
 
-FVFRange = (40 : 5 : 85);
+FVFRange = (10 : 10 : 80);
 
 lFVF = length(FVFRange);
 
@@ -14,7 +14,7 @@ nb_TE = 12;
 noise = '1';
 experience_name = 'Porcine2';
 
-suffix = 'polyfit_cartesian_with_theta';
+suffix = 'polyfit_cartesian_without_theta';
 
 tic()
 display('Concatenation ...')
@@ -29,10 +29,10 @@ news_dims_para = [lFVF dims_signal(2:end) nb_replica];
 SignalValues = zeros(news_dims_signal);
 
 gRatioValues = zeros(news_dims_para);
-xiValues = zeros(news_dims_para);
-xaValues = zeros(news_dims_para);
-T2outValues = zeros(news_dims_para);
-T2myelValues = zeros(news_dims_para);
+xiMyelinValues = zeros(news_dims_para);
+xaMyelinValues = zeros(news_dims_para);
+T2IntraExtraAxonalValues = zeros(news_dims_para);
+T2MyelinValues = zeros(news_dims_para);
 weightValues = zeros(news_dims_para);
 thetaValues = zeros(news_dims_para);
 directionsValues = zeros([3, news_dims_para]);
@@ -47,10 +47,10 @@ for k = 1 : lFVF
         SignalValues(:, k, :, :, :, :, :, :, :,  num) = h5read(dict_path, '/SignalValues');
         
         gRatioValues(k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/gRatioValues');
-        xiValues(k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/xiValues');
-        xaValues(k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/xaValues');
-        T2outValues(k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/T2outValues');
-        T2myelValues(k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/T2myelValues');
+        xiMyelinValues(k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/xiMyelinValues');
+        xaMyelinValues(k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/xaMyelinValues');
+        T2IntraExtraAxonalValues(k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/T2IntraExtraAxonalValues');
+        T2MyelinValues(k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/T2MyelinValues');
         weightValues(k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/weightValues');
         thetaValues(k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/thetaValues');
         directionsValues(:, k, :, :, :, :, :, :, :, num) = h5read(dict_path, '/directionsValues');      
@@ -64,29 +64,29 @@ dims = size(gRatioValues);
 FVFValues = repmat(FVFRange', [1 dims(2:end)])./100;
 
 gRatioRange = h5read(dict_path, '/gRatioRange');
-xiRange = h5read(dict_path, '/xiRange');
-xaRange = h5read(dict_path, '/xaRange');
-T2outRange = h5read(dict_path, '/T2outRange');
-T2myelRange = h5read(dict_path, '/T2myelRange');
+xiMyelinRange = h5read(dict_path, '/xiMyelinRange');
+xaMyelinRange = h5read(dict_path, '/xaMyelinRange');
+T2IntraExtraAxonalRange = h5read(dict_path, '/T2IntraExtraAxonalRange');
+T2MyelinRange = h5read(dict_path, '/T2MyelinRange');
 weightRange = h5read(dict_path, '/weightRange');
 
-time = h5read(dict_path, '/time');
+TE = h5read(dict_path, '/TE');
 sphere_rotations = h5read(dict_path, '/sphere_rotations');
 
-infoDico = 'In order, FVF, gRatio, xi, dir, T2myel, T2out, weight, replic';
+infoDico = 'In order, FVF, gRatio, xiMyelin, xaMyelin, dir, T2Myelin, T2IntraExtraAxonalRange, weight, replic';
 infoSignal = ['concatenation of ' num2str(nb_orientation) ' rotations each composed of the theta angle (B0 angle) 12 TE signal real and imaginary polyfit normalized'];
 
 prefix_name = ['SignalWithNoise' noise];
 
-base_name = [prefix_name '_' num2str(nb_replica) 'rep_' num2str(nb_orientation) 'orientations_' num2str(nb_TE) 'TE_' experience_name '_fix_xa_' suffix];
+base_name = [prefix_name '_' num2str(nb_replica) 'rep_' num2str(nb_orientation) 'orientations_' num2str(nb_TE) 'TE_' experience_name '_fix_xa_large_FVF__single_direction_' suffix '_tensor_mask'];
 signal_name = [base_name '.h5py'];
 
 display('Save ...')
 tic()
 save([dico_folder signal_name], 'SignalValues', ...
-    'FVFRange', 'gRatioRange', 'xiRange', 'xaRange', 'T2myelRange','T2outRange','weightRange', 'FVFValues', ...
-    'gRatioValues', 'xiValues', 'xaValues', 'T2myelValues', 'T2outValues', 'directionsValues', 'thetaValues', ...
-    'weightValues', 'nb_replica', 'time', 'infoDico', 'infoSignal', 'sphere_rotations', '-v7.3')
+    'FVFRange', 'gRatioRange', 'xiMyelinRange', 'xaMyelinRange', 'T2MyelinRange','T2IntraExtraAxonalRange','weightRange', 'FVFValues', ...
+    'gRatioValues', 'xiMyelinValues', 'xaMyelinValues', 'T2MyelinValues', 'T2IntraExtraAxonalValues', 'directionsValues', 'thetaValues', ...
+    'weightValues', 'nb_replica', 'TE', 'infoDico', 'infoSignal', 'sphere_rotations', '-v7.3')
 toc()
 display('Done')
 
