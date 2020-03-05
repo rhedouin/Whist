@@ -156,7 +156,6 @@ for k = 1: lGRatio
                         
                         signal_components(k, l, m, n, o, 1) = reconstructSignalComponents(field, model, model_parameters);
                         directionValues(:, k, l, m, n, o, 1) = current_dir;
-
                     end
                     
                 elseif and(dict_params.rotations == 1, dict_params.dispersion == 1)
@@ -202,7 +201,6 @@ for k = 1: lGRatio
 end
 
 thetaValues = acos(abs(directionValues(3, :, :, :, :, :, :)));
-
 info = 'In order, gRatio, xi, xa, fiber directions, rotation, dispersion';
 
 save([FVF_outputfolder 'Signal_FVF' num2str(FVF_round) suffix '.mat'], 'signal_components', 'gRatioRange','gRatioValues', 'xiMyelinRange',  'xiMyelinValues', 'xaMyelinRange',  'xaMyelinValues', 'directionValues', 'thetaValues', 'dispersionValues', 'TE', 'info', 'sphere_rotations', 'fiber_directions', 'dims', 'dict_params');

@@ -1,16 +1,17 @@
-function [axon_collection mean_g_ratio] = changeGRatio(axon_collection, expected_g_ratio, dims)
+function [axon_collection, mean_g_ratio] = changeGRatio(axon_collection, expected_g_ratio, mask)
 
-[x,y] = ndgrid(1:dims(1),1:dims(2));
+dims = size(mask);
 
 g_list = cat(1,axon_collection(:).gRatio);
 mean_g_ratio = mean(g_list);
 
-nb_axons = length(g_list);
 pdf_list = cat(1,(axon_collection(:).axonEquivDiameter)).^2;
 
-if (mean_g_ratio > expected_g_ratio)
+[~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 1);
+
+if (surface_g_ratio > expected_g_ratio)
     mode = 'extend';
-elseif (mean_g_ratio < expected_g_ratio)
+elseif (surface_g_ratio < expected_g_ratio)
     mode = 'shrink';
 else
     error('Expected GRatio');
@@ -20,8 +21,8 @@ stop = 0;
 it = 0;
 
 while stop == 0
-    
     it = it+1;
+    display(['global g-ratio : ' num2str(surface_g_ratio)]);
     
     cdf_list = cumsum([0; pdf_list]);
     if (cdf_list(end) == 0)
@@ -35,14 +36,14 @@ while stop == 0
     pdf_list(k) = pdf_list(k)/2;
     
     clear current_myelin current_axon
-    %% From Wharton 12
+
     myelin_map = zeros(dims);
     
     old_myelin = round(axon_collection(k).data);    
     old_myelin_index = sub2ind(dims,old_myelin(:,1),old_myelin(:,2));
     myelin_map(old_myelin_index) = 1;
     
-    old_axon = as_myelin2axon(old_myelin);
+    old_axon = myelin2axon(old_myelin);
     old_axon_index = sub2ind(dims,old_axon(:,1),old_axon(:,2));
     
     nb_pixel = length([old_myelin_index; old_axon_index]);
@@ -56,20 +57,22 @@ while stop == 0
             
             [current_myelin(:,1), current_myelin(:,2)] = ind2sub(dims,current_myelin_index);
             
-            current_axon = as_myelin2axon(current_myelin);
+            current_axon = myelin2axon(current_myelin);
             current_axon_index = sub2ind(dims,current_axon(:,1),current_axon(:,2));
             
             if (length(current_myelin_index) ~= nb_pixel)
                 
-                axon_collection(k).data = current_myelin;
-               
+                axon_collection(k).data = current_myelin;               
+                [~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 1);
+
                 current_g_ratio = sqrt(length(current_axon_index) / (length(current_myelin_index) + length(current_axon_index)));
                 
                 axon_collection(k).gRatio = current_g_ratio;
                 g_list(k) = current_g_ratio;
                 
                 mean_g_ratio = mean(g_list);
-                if (mean_g_ratio < expected_g_ratio)
+
+                if (surface_g_ratio < expected_g_ratio)
                     stop = 1;
                 end
             else
@@ -77,13 +80,11 @@ while stop == 0
             end
                 
         case 'shrink'
-            map_bound = zeros(dims);
             
             bound = bwboundaries(myelin_map, 'noholes');
             bound = bound{1};
             bound_index = sub2ind(dims,bound(:,1),bound(:,2));
             bound_index = sort(unique(bound_index));
-            map_bound(bound_index) = 1;
             
             axon_map = zeros(dims);
             axon_map(old_axon_index) = 1;
@@ -95,7 +96,7 @@ while stop == 0
             current_myelin_index = union(current_myelin_index, bound_index);
             
             [current_myelin(:,1), current_myelin(:,2)] = ind2sub(dims,current_myelin_index);
-            current_axon = as_myelin2axon(current_myelin);
+            current_axon = myelin2axon(current_myelin);
             current_axon_index = sub2ind(dims,current_axon(:,1),current_axon(:,2));
             
             axon_collection(k).data = current_myelin;
@@ -104,13 +105,15 @@ while stop == 0
             
             axon_collection(k).gRatio = current_g_ratio;
             g_list(k) = current_g_ratio;
-            
+             
+            [~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 1);
+                     
             if (length(current_myelin_index) == length(bound_index))
                 pdf_list(k) = 0;
             end
             
             mean_g_ratio = mean(g_list);
-            if (mean_g_ratio > expected_g_ratio)
+            if (surface_g_ratio > expected_g_ratio)
                 stop = 1;
             end
     end  

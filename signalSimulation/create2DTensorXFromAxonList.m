@@ -94,7 +94,7 @@ tensor_X(:,:,4) = total_X(:,:,2,2);
 tensor_X(:,:,5) = total_X(:,:,2,3);
 tensor_X(:,:,6) = total_X(:,:,3,3);
 
-if ~isfield(model_parameters, 'mask_tensor_map') || model_parameters.mask_tensor_map == 1
+if  isfield(model_parameters, 'no_mask_tensor_map') && model_parameters.no_mask_tensor_map == 1
     mask_replic = repmat(model_parameters.mask,[1 1 6]);
     tensor_X(~mask_replic) = 0;
 end

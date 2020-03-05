@@ -1,29 +1,27 @@
-function [axon_collection, FVF] = packAxons(axon_collection, mask, max_iteration, max_FVF, step)
+function [axon_collection, FVF] = packAxons(axon_collection, mask, max_iteration, max_FVF, step, plot_model)
 % author : Renaud Hedouin 
 % email : renaud.hedouin@gmail.com
 % Code adapted from Tom Mingasson toolbox 
 
 dims = size(mask);
-
-disp(' ')
 disp('Packing in process...')
-disp(' ')
 
-N = length(axon_collection);
 FVF(1) = 0;
-
-plot = 1;
-
+pass = 0;
 for iter = 1:max_iteration
     disp(['Iteration : ' num2str(iter)]);
     if (mod(iter, 10)) == 0
-        [~, ~, FVF, ~] = createModelFromData(axon_collection, mask, plot);
+        [~, ~, FVF, ~] = createModelFromData(axon_collection, mask, plot_model);
         
         disp(['FVF : ' num2str(FVF)]);
     
         pause(0.1)
         if(FVF > max_FVF)
             break;
+        end
+        if (FVF > 0.6) && pass == 0
+            keyboard;
+            pass = 1;
         end
     end
     axon_collection = packAxonsOneIteration(axon_collection, dims, FVF, step);
@@ -53,6 +51,7 @@ inter0_index = 1 - inter1_index;  % disks that NOT overlap
 pts_centered = dims/2-pts;
 attraction_norm = sqrt(pts_centered(:,1).^2+pts_centered(:,2).^2);
 attraction = pts_centered./repmat(attraction_norm,[1,2]);
+attraction(isnan(attraction)) = 0; % avoid division by zero when a pt is centered in [0, 0]
 
 % repulsion
 pts_replic = permute(repmat(pts,[1,1,N]), [1 3 2]);

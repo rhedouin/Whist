@@ -1,5 +1,7 @@
 function out = createDictionaryPartSignalMultiModalities(signal_path, output_folder, experience_name, T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF, nb_orientations, replic, dict_options)
+
 load(signal_path); 
+
 TE = TE(1:nb_TE); 
 
 lgRatio = length(gRatioRange); 

@@ -1,0 +1,56 @@
+Comments to Renaud 2D white matter Toolbox
+
+Readme file is ok, but maybe having something a bit more like Kwok-shing Github and docs could be usefull.
+
+I would put the files on the example directory on the root.
+
+in the CreateOne2DWMModel.m
+
+why is expected_FVF an input variable and not simply going as an element of the structure options? 
+Also, I would consider renaming it into something like ModelParams
+
+line 48 of CreateOne2DWMModel changed to 
+
+if ~exist('options')
+
+
+% options.mask = zeros(options.dims); 
+% options.mask(round(options.dims(1)/3):round(2*options.dims(1)/3), round(options.dims(2)/3):round(2*options.dims(2)/3)) = 1;
+% % the mask is the area where the fiber volume fraction (FVF) will be
+% % computed. It represents the actual final WM model after axon packing
+
+Is this a good way of setting it? If I had started with less axons, 100, the mask should be a region where the FVF is more or less homogeneous, the setting to 1/3 of the FOV does not garantee it.
+
+It should probably be based on first computing the FVF of the whole matrix when the axons are randomly placed, and then see what matrix size would be needed to have the max_FVF (and make it a bit less than that).
+
+
+Changed some of the output file names that should not be based on the project directory, and added some checks if the output directory existed.
+
+
+Tried to quickly check if the modifications worked by reducing the number of iterations from 5000 to 50... but it came with an error when preforming the spreading:
+
+
+done
+FVF packed model : 0.19546
+spread axons ...
+currentFVF : 0.1971
+currentFVF : 0.1971
+Index in position 1 exceeds array bounds (must not exceed 289).
+
+Error in repulseAxons (line 22)
+        axon_collection(k).data = axon_collection(k).data - axon_collection(k).Centroid + pts(k,:);
+
+Error in createOne2DWMModel (line 123)
+    [axon_collection, FVF] = repulseAxons(axon_collection, expected_FVF, options.tolerance,
+    options.mask, options.plot_model);
+
+
+that  should rather through an error message if the achieved FVF lower than desired FVF.
+
+ 
+
+ createModelFromAxons(N, FVF_expected, FVF_max, tol, suffix) is not used and should not have the project folder hardcoded.
+
+
+
+

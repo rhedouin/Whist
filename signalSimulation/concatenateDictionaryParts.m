@@ -2,7 +2,7 @@ clear
 % close all
 
 base_folder = '/project/3015069.04/';
-dico_folder = [base_folder 'dictionaries/multi_orientations/Porcine2/fix_xa_large_FVF_single_direction_tensor_mask/'];
+dico_folder = [base_folder 'dictionaries/multi_orientations/Porcine2/lowres/fix_xa_large_FVF_20_directions_tensor_mask/'];
 
 FVFRange = (10 : 10 : 80);
 
@@ -10,17 +10,18 @@ lFVF = length(FVFRange);
 
 nb_replica = 8;
 nb_orientation = 6;
-nb_TE = 12;
-noise = '1';
+nb_TE = 18;
+noise = '0';
 experience_name = 'Porcine2';
 
-suffix = 'polyfit_cartesian_without_theta';
+input_suffix = 'fix_xa_polyfit_cartesian_with_theta';
+output_suffix = 'fix_xa_large_FVF_20_directions_polyfit_cartesian_with_theta';
 
 tic()
 display('Concatenation ...')
 
 input_folder = [dico_folder 'dictionary_part/FVF40_N400_train1/'];
-dict_path = [input_folder 'SignalWithNoise'  noise '_FVF40_replic1_' num2str(nb_orientation) 'orientations_' num2str(nb_TE) 'TE_' experience_name '_fix_xa_' suffix '.h5py'];
+dict_path = [input_folder 'SignalWithNoise'  noise '_FVF40_replic1_' num2str(nb_orientation) 'orientations_' num2str(nb_TE) 'TE_' experience_name '_' input_suffix '.h5py'];
 
 dims_signal = size(h5read(dict_path, '/SignalValues'));
 news_dims_signal = [dims_signal(1) lFVF dims_signal(2:end) nb_replica];
@@ -42,7 +43,7 @@ for k = 1 : lFVF
     for num = 1 : nb_replica
         num
         input_folder = [dico_folder 'dictionary_part/FVF' num2str(FVF) '_N400_train' num2str(num) '/'];
-        dict_path = [input_folder 'SignalWithNoise'  noise '_FVF' num2str(FVF) '_replic' num2str(num) '_' num2str(nb_orientation) 'orientations_' num2str(nb_TE) 'TE_Porcine2_fix_xa_' suffix '.h5py'];
+        dict_path = [input_folder 'SignalWithNoise'  noise '_FVF' num2str(FVF) '_replic' num2str(num) '_' num2str(nb_orientation) 'orientations_' num2str(nb_TE) 'TE_' experience_name '_' input_suffix '.h5py'];
         
         SignalValues(:, k, :, :, :, :, :, :, :,  num) = h5read(dict_path, '/SignalValues');
         
@@ -78,7 +79,7 @@ infoSignal = ['concatenation of ' num2str(nb_orientation) ' rotations each compo
 
 prefix_name = ['SignalWithNoise' noise];
 
-base_name = [prefix_name '_' num2str(nb_replica) 'rep_' num2str(nb_orientation) 'orientations_' num2str(nb_TE) 'TE_' experience_name '_fix_xa_large_FVF__single_direction_' suffix '_tensor_mask'];
+base_name = [prefix_name '_' num2str(nb_replica) 'rep_' num2str(nb_orientation) 'orientations_' num2str(nb_TE) 'TE_' experience_name '_' output_suffix '.h5py'];
 signal_name = [base_name '.h5py'];
 
 display('Save ...')

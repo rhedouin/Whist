@@ -11,7 +11,7 @@ for k = 1:N
 end
 maxRadius = (maxSize /2) + 5;
 % dimension of the square area
-sqrt_N = round(sqrt(N));
+sqrt_N = floor(sqrt(N-1)) + 1;
 
 % Random positions on a grid for the N axons
 if ~exist('dims')
@@ -24,10 +24,10 @@ else
     grid_spacing = round(linspace(maxRadius, dims(1) - maxRadius, sqrt_N));
 end
     
-[X_grid Y_grid] =  meshgrid(grid_spacing, grid_spacing);
+[X_grid, Y_grid] =  meshgrid(grid_spacing, grid_spacing);
 
-X_grid =X_grid(:);
-Y_grid =Y_grid(:);
+X_grid = X_grid(:);
+Y_grid = Y_grid(:);
 Permutations = randperm(N);
 pts = zeros(N,2);
 
