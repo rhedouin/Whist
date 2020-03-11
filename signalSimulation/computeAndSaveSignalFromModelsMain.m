@@ -3,22 +3,24 @@ close all
 cd /project/3015069.04/temp/Jobs
 
 model_inputfolder = '/project/3015069.04/WM_Models/N400/';
-signal_outputfolder = '/project/3015069.04/signal_components/multi_orientations/Porcine2/lowres/fix_xa_large_FVF_20_directions/';
+signal_outputfolder = '/project/3015069.04/signal_components/multi_orientations/theorically_16_orientations/fix_xa_large_FVF_20_directions_16_orientations_12_TE/';
 
 rotation_folder = '/project/3015069.04/data/rotations/';
-req_mem   = 4e9;
+req_mem   = 6e9;
 req_etime = 10000;
 
 %%%%%%%%%%%% Need to be check
-load([rotation_folder 'Porcine-2_lowres_rotation_ref_2_orientations.mat']);
+load([rotation_folder 'theorically_good_16_rotations.mat']);
 load([rotation_folder '20_fiber_orientations_rotations.mat']);
 
-dict_params.TE = linspace(1.8,56.22,18)*1e-3;
+% dict_params.TE = linspace(1.8,94.6,30)*1e-3;
+dict_params.TE = linspace(2.44,50.73,12)*1e-3;
+
 %%%%%%%%%%%%
 
 dict_params.B0 = 3;
 
-dict_params.myelin.xiRange = [-0.2, 0.1, 0, 0.1, 0.2];
+dict_params.myelin.xiRange = -0.2:0.1:0.2;
 % dict_params.myelin.xaRange = -0.2:0.1:0.2;
 dict_params.myelin.xaRange = -0.1;
 
@@ -33,12 +35,12 @@ dict_params.dispersion = 0;
 dict_params.kappa_list = [inf 18 9 5.5 3.5];
 dict_params.dispersion_list = [0 0.1 0.2 0.3 0.4];
 
-dict_params.no_mask_tensor_map = 1;
+dict_params.no_mask_tensor_map = 0;
 
 it = 0;
 nb_replica = 8;
 
-for k = 1:nb_replica
+for k = 5:nb_replica
     it = it + 1;
     suffix = ['_train' num2str(k)];
     for FVF = 10 : 10 : 80

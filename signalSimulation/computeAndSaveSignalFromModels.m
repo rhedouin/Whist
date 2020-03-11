@@ -64,6 +64,12 @@ directionValues = zeros(3, lGRatio, lXiMyelin, lXaMyelin, nb_fiber_directions, l
 model_parameters.TE = dict_params.TE;
 model_parameters.dispersion = dict_params.dispersion;
          
+if ~isfield(model_parameters, 'no_mask_tensor_map')
+    model_parameters.no_mask_tensor_map = 0;
+else
+    model_parameters.no_mask_tensor_map = dict_params.no_mask_tensor_map;
+end
+
 for k = 1: lGRatio
     k
     clear Model ZoomedModel axon_collection  

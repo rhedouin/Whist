@@ -6,32 +6,29 @@ rotations_folder = [base_folder 'data/rotations/'];
  
 load([rotations_folder '20_fiber_orientations_no_rotation.mat']);
 
-rotation_axis = ParticleSampleSphere('N',15);
+rotation_axis = ParticleSampleSphere('N',16);
 visualize3dArrow(rotation_axis)
 
 unit = [0; 0; 1];
-
+nb_rotations = 16;
 for l = 1:20
-    for k = 1:15
+    for k = 1:nb_rotations
         rotations(:,:,k) = createRotationMatrixFromVector(rotation_axis(k,:));
-        save([rotations_folder 'theorically_good_' num2str(k) '_rotations.mat'], 'sphere_rotations');
 
-%         alldirections(k,l,:) = rotations(:,:,k) * fiber_directions(l,:)';
-%         theta(l,k) = acos(sign(alldirections(k,l,3))*alldirections(k,l,3));
+        alldirections(k,l,:) = rotations(:,:,k) * fiber_directions(l,:)';
+        theta(l,k) = acos(sign(alldirections(k,l,3))*alldirections(k,l,3));
 
     end    
 end
 
-save([rotations_folder 'theorically_good__rotations.mat
 figure
-for k = 1:15
+for k = 1:nb_rotations
     theta_sort(:,k) = sort(theta(:,k));
     plot(theta_sort(:,k) )
     hold on
 end
 
-
-
+save([rotations_folder 'theorically_good_' num2str(nb_rotations) '_rotations.mat'], 'rotations')
 
 
 return

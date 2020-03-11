@@ -36,9 +36,6 @@ number_dims = length(model_parameters.dims);
 
 if  number_dims == 2
     [tensor_X, model]  = create2DTensorXFromAxonList(axon_collection, model_parameters);
-
-%     mask_replic = repmat(model_parameters.mask,[1 1 6]);
-%     tensor_X(~mask_replic) = 0;
     
     field_complex = createFieldFrom2DTensorX(tensor_X, model_parameters);
     field = real(field_complex);
