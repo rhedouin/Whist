@@ -1,20 +1,20 @@
-clear
+% clear
 close all
 cd /project/3015069.04/temp/Jobs
 
 model_inputfolder = '/project/3015069.04/WM_Models/N400/';
-signal_outputfolder = '/project/3015069.04/signal_components/multi_orientations/theorically_16_orientations/fix_xa_large_FVF_20_directions_16_orientations_12_TE/';
+signal_outputfolder = '/project/3015069.04/signal_components/multi_orientations/BrainSample2/';
 
 rotation_folder = '/project/3015069.04/data/rotations/';
 req_mem   = 6e9;
 req_etime = 10000;
 
 %%%%%%%%%%%% Need to be check
-load([rotation_folder 'theorically_good_16_rotations.mat']);
+load([rotation_folder 'BrainSample2_rotations_ref_2_orientations.mat']);
 load([rotation_folder '20_fiber_orientations_rotations.mat']);
 
 % dict_params.TE = linspace(1.8,94.6,30)*1e-3;
-dict_params.TE = linspace(2.44,50.73,12)*1e-3;
+dict_params.TE = linspace(1.7,35.25,12)*1e-3;
 
 %%%%%%%%%%%%
 
@@ -40,7 +40,7 @@ dict_params.no_mask_tensor_map = 0;
 it = 0;
 nb_replica = 8;
 
-for k = 5:nb_replica
+for k = 1:nb_replica
     it = it + 1;
     suffix = ['_train' num2str(k)];
     for FVF = 10 : 10 : 80

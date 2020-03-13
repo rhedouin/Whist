@@ -37,9 +37,9 @@ end
 hold off, axis off, camlight left
 hold off, camlight left
 set(gca,'CameraViewAngle',4)
-text(1.4,0,0,'X','FontSize',14), text(0,1.4,0,'Y','FontSize',14)
-text(0,0,1.4,'Z','VerticalAlignment','bottom',...
-    'HorizontalAlignment','center','FontSize',14)
+% text(1.4,0,0,'X','FontSize',14), text(0,1.4,0,'Y','FontSize',14)
+% text(0,0,1.4,'Z','VerticalAlignment','bottom',...
+%     'HorizontalAlignment','center','FontSize',14)
 
 out = 0;
 end

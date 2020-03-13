@@ -7,8 +7,8 @@ req_etime = 6000;
 
 base_folder = '/project/3015069.04/';
 job_folder = [base_folder 'temp/Jobs'];
-signal_folder = [base_folder 'signal_components/multi_orientations/theorically_16_orientations/fix_xa_large_FVF_20_directions_16_orientations_12_TE/'];
-dico_folder = [base_folder 'dictionaries/multi_orientations/theorically_16_orientations/fix_xa_large_FVF_20_directions_16_orientations_12_TE/'];
+signal_folder = [base_folder 'signal_components/multi_orientations/BrainSample2/'];
+dico_folder = [base_folder 'dictionaries/multi_orientations/BrainSample2/'];
 
 cd(job_folder)
 
@@ -21,13 +21,13 @@ T2ExtraAxonalRange = (20 : 20 : 100)* 1e-3;
 weightRange = [0.5 1 1.5 2 2.5 3];
 
 nb_TE = 12;
-nb_orientations = 16;
+nb_orientations = 9;
 
 noise = 0;
 nb_replic = 8;
 
 it = 0;
-experience_name = 'Porcine2';
+experience_name = 'BrainSample2';
 
 options.include_theta = 1;
 
@@ -37,7 +37,7 @@ options.coordinate.polyfit_polar = 0;
 options.coordinate.polyfit_cartesian = 1;
 options.coordinate.polyfit_cartesian_demean = 0;
 
-noise_list = [0, 0.01, 0.02];
+noise_list = [0.01];
 
 replic_list = [1, 2, 3, 4, 5, 6, 7, 8];
 

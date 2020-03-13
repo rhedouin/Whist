@@ -30,7 +30,8 @@ model_parameters.extra_axonal.xi= 0;
 
 % TE (required)
 % model_parameters.TE = (2:3:59)*1e-3;
-model_parameters.TE = linspace(0.0001,0.08,100); 
+model_parameters.TE = linspace(0.0001,0.08,50); 
+nb_TE = length(model_parameters.TE);
 
 % optional, needed to include T1 effect in signal weights
 model_parameters.flip_angle = 20;
@@ -50,11 +51,17 @@ FVF_list = [10, 20, 30, 40, 50, 60, 70, 80];
 theta_list = linspace(0, pi/2, 6);
 nb_orientations = length(theta_list);
 
-gRatio = 60;
+gRatio_round = 60;
+fig = figure
+colors = linspecer(length(FVF_list));
 
-for FVF = FVF_list
+for kFVF = 1:length(FVF_list)
+    FVF_round = FVF_list(kFVF);
+    display(['FVF: ' num2str(FVF_round)])
     for num = model_list
-        model_path = [base_model_folder 'FVF' num2str(FVF) '_N400_train' num2str(num) '/FVF' num2str(FVF) '_gRatio' num2str(gRatio) '_N400_train' num2str(num)'];
+        display(['model: ' num2str(num)])
+
+        model_path = [base_model_folder 'FVF' num2str(FVF_round) '_N400_train' num2str(num) '/FVF' num2str(FVF_round) '_gRatio' num2str(gRatio_round) '_N400_train' num2str(num)'];
         load(model_path)
         
         model_parameters.mask = mask;
@@ -62,25 +69,55 @@ for FVF = FVF_list
         number_dims = ndims(mask);
         model_parameters.dims = size(mask);
         
+        total_signal = [];
         for k = 1:nb_orientations
             
             theta = theta_list(k);
             phi = 0;
             model_parameters.field_direction = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)];
-            
+%             orientations(k,:) = model_parameters.field_direction ;
             % Estimate the relative weights of each compartment
             model_parameters = computeCompartmentSignalWeight(model_parameters);
-            
-%             model_parameters.no_mask_tensor_map = 5;
-            
-            %%%%%%%%%% Simulate the field perturbation from the WM model and the multi GRE signals
+                        
+            %%%%%%%%% Simulate the field perturbation from the WM model and the multi GRE signals
             [signal_original, field] = simulateSignalFromModel(axon_collection, model_parameters);
-            keyboard;
+            
+            total_signal = [total_signal signal_original.total_normalized];
         end
-    end
+
+        subplot(211)
+        plot(real(total_signal), '-', 'Color', colors(kFVF, :), 'LineWidth', 1.5);
+        ylabel('real')
+        hold on 
+        
+        subplot(212)
+        p(kFVF) = plot(imag(total_signal), '-', 'Color', colors(kFVF, :), 'LineWidth', 1.5);
+        ylabel('imag')      
+        hold on
+    end    
+end
+leg = legend(p, '10', '20', '30', '40', '50', '60', '70', '80');
+title(leg, 'FVF');
+leg.Location = 'southwest';
+leg.NumColumns = 2;
+
+subplot(212)
+for k = 1:nb_orientations -1
+    vline(nb_TE * k, '--k')
 end
 
 
+subplot(211)
+for k = 1:nb_orientations -1
+    vline(nb_TE * k, '--k')
+end
+
+subplot(211)
+set(gca, 'FontSize', 20, 'FontWeight','bold', 'XTick', [])
+
+subplot(212)
+xlabel('concatenate signal')
+set(gca, 'FontSize', 20, 'FontWeight','bold', 'XTick', [])
 
 
 
