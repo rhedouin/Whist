@@ -24,12 +24,12 @@ addpath([your_folder 'createWMModel'])
 
 %%%%%%%%%% Options 
 %%%%%%%%%% White matter model 
-model_params.number_of_axons = 100; % 
+model_params.number_of_axons = 400; % 
 % 
 %%%%%%%%%% Axons packing 
 model_params.max_FVF = 0.8;
 model_params.max_iteration = 5000;
-model_params.packing_speed = 1;
+model_params.packing_speed = 0.5;
 % 
 %%%%%%%%%%% Axons dispersion
 model_params.expected_FVF = 0.5;

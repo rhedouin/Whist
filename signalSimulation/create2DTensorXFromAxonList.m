@@ -1,48 +1,48 @@
-function [tensor_X, total_model, phimap] = create2DTensorXFromAxonList(axonlist,model_params)
+function [tensor_X, total_model, phimap] = create2DTensorXFromAxonList(axonlist,model_parameters)
 % Create 2D susceptibility tensor (see Tianyou Xu 2018)
 
-total_X = zeros(model_params.dims(1),model_params.dims(2),3,3);
+total_X = zeros(model_parameters.dims(1),model_parameters.dims(2),3,3);
 
-myelin_Xi = [model_params.myelin.xi 0 0; 0 model_params.myelin.xi 0; 0 0 model_params.myelin.xi];
-myelin_Xa = [model_params.myelin.xa 0 0; 0 -model_params.myelin.xa/2 0; 0 0 -model_params.myelin.xa/2];
+myelin_Xi = [model_parameters.myelin.xi 0 0; 0 model_parameters.myelin.xi 0; 0 0 model_parameters.myelin.xi];
+myelin_Xa = [model_parameters.myelin.xa 0 0; 0 -model_parameters.myelin.xa/2 0; 0 0 -model_parameters.myelin.xa/2];
 
-if isfield(model_params.intra_axonal, 'xi')
-    intra_axonal_Xi = [model_params.intra_axonal.xi 0 0; 0 model_params.intra_axonal.xi 0; 0 0 model_params.intra_axonal.xi];
+if isfield(model_parameters.intra_axonal, 'xi')
+    intra_axonal_Xi = [model_parameters.intra_axonal.xi 0 0; 0 model_parameters.intra_axonal.xi 0; 0 0 model_parameters.intra_axonal.xi];
 end
 
-if isfield(model_params.extra_axonal, 'xi')
-    extra_axonal_Xi = [model_params.extra_axonal.xi 0 0; 0 model_params.extra_axonal.xi 0; 0 0 model_params.extra_axonal.xi];
-    total_X = permute(repmat(extra_axonal_Xi, [1 1 model_params.dims]), [3 4 1 2]);
+if isfield(model_parameters.extra_axonal, 'xi')
+    extra_axonal_Xi = [model_parameters.extra_axonal.xi 0 0; 0 model_parameters.extra_axonal.xi 0; 0 0 model_parameters.extra_axonal.xi];
+    total_X = permute(repmat(extra_axonal_Xi, [1 1 model_parameters.dims]), [3 4 1 2]);
 end
 
-total_model = zeros(model_params.dims);
-phimap = zeros(model_params.dims);
+total_model = zeros(model_parameters.dims);
+phimap = zeros(model_parameters.dims);
 compute_phimap = 1;
 
 grad_threshold = 0.0001;
 
 for j = 1:length(axonlist)
 
-    map = zeros(model_params.dims);
+    map = zeros(model_parameters.dims);
     sub_myelin = axonlist(j).data;
     sub_intra_axonal = myelin2axon(sub_myelin);
 
-    ind_myelin = sub2ind(model_params.dims,sub_myelin(:,1),sub_myelin(:,2));  
-    ind_intra_axonal = sub2ind(model_params.dims,sub_intra_axonal(:,1),sub_intra_axonal(:,2));    
+    ind_myelin = sub2ind(model_parameters.dims,sub_myelin(:,1),sub_myelin(:,2));  
+    ind_intra_axonal = sub2ind(model_parameters.dims,sub_intra_axonal(:,1),sub_intra_axonal(:,2));    
  
     min_sub_myelin = min(sub_myelin);
     max_sub_myelin = max(sub_myelin);
     
     extra_space = 10;   
-    small_map_model_params.dims = max_sub_myelin - min_sub_myelin + 2*extra_space;
+    small_map_model_parameters.dims = max_sub_myelin - min_sub_myelin + 2*extra_space;
     
     new_sub_myelin = sub_myelin - min_sub_myelin + extra_space;
     new_sub_intra_axonal = myelin2axon(new_sub_myelin);
 
-    new_ind_myelin = sub2ind(small_map_model_params.dims,new_sub_myelin(:,1),new_sub_myelin(:,2));  
-    new_ind_axon = sub2ind(small_map_model_params.dims,new_sub_intra_axonal(:,1),new_sub_intra_axonal(:,2));    
+    new_ind_myelin = sub2ind(small_map_model_parameters.dims,new_sub_myelin(:,1),new_sub_myelin(:,2));  
+    new_ind_axon = sub2ind(small_map_model_parameters.dims,new_sub_intra_axonal(:,1),new_sub_intra_axonal(:,2));    
     
-    small_map = zeros(small_map_model_params.dims);
+    small_map = zeros(small_map_model_parameters.dims);
     small_map(new_ind_myelin) = 1;
     small_map(new_ind_axon) = 2;
     
@@ -77,7 +77,7 @@ for j = 1:length(axonlist)
         end
     end
     
-    if isfield(model_params.intra_axonal, 'xi')
+    if isfield(model_parameters.intra_axonal, 'xi')
         for k = 1:size(sub_intra_axonal,1)
             total_X(sub_intra_axonal(k,1),sub_intra_axonal(k,2),:,:) = intra_axonal_Xi;
         end

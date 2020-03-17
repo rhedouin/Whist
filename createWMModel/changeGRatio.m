@@ -1,4 +1,4 @@
-function [axon_collection, mean_g_ratio] = changeGRatio(axon_collection, expected_g_ratio, mask)
+function [axon_collection, mean_g_ratio] = changeGRatio(axon_collection, expected_g_ratio, mask, plot_model)
 
 dims = size(mask);
 
@@ -7,7 +7,7 @@ mean_g_ratio = mean(g_list);
 
 pdf_list = cat(1,(axon_collection(:).axonEquivDiameter)).^2;
 
-[~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 1);
+[~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, plot_model);
 
 if (surface_g_ratio > expected_g_ratio)
     mode = 'extend';
@@ -62,9 +62,14 @@ while stop == 0
             
             if (length(current_myelin_index) ~= nb_pixel)
                 
-                axon_collection(k).data = current_myelin;               
-                [~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 1);
-
+                axon_collection(k).data = current_myelin;
+                
+                if (mod(it, 5) == 0)
+                    [~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, plot_model);
+                else
+                    [~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 0);
+                end
+                
                 current_g_ratio = sqrt(length(current_axon_index) / (length(current_myelin_index) + length(current_axon_index)));
                 
                 axon_collection(k).gRatio = current_g_ratio;
@@ -105,9 +110,13 @@ while stop == 0
             
             axon_collection(k).gRatio = current_g_ratio;
             g_list(k) = current_g_ratio;
-             
-            [~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 1);
-                     
+            
+            if (mod(it, 5) == 0)
+                [~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, plot_model);
+            else
+                [~, ~, ~, surface_g_ratio] = createModelFromData(axon_collection, mask, 0);
+            end
+                                 
             if (length(current_myelin_index) == length(bound_index))
                 pdf_list(k) = 0;
             end

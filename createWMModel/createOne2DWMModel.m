@@ -157,7 +157,7 @@ axon_collection = convertAxonDataToRoundValues(axon_collection);
 % Change g-ratio (optional)
 if isfield(model_params, 'expected_g_ratio')
     disp('change g ratio ...')
-    axon_collection = changeGRatio(axon_collection, model_params.expected_g_ratio, model_params.mask);
+    axon_collection = changeGRatio(axon_collection, model_params.expected_g_ratio, model_params.mask, model_params.plot_model);
     disp('done')
 end
 

@@ -64,7 +64,6 @@ while or((FVF_current < FVF_expected - tol),(FVF_current > FVF_expected))
     
     if (mod(iter_total, 5) == 0)
         [~, ~, FVF_current] = createModelFromData(axon_collection, mask, plot_model);
-        pause(0.01);
     else
         [~, ~, FVF_current] = createModelFromData(axon_collection, mask, 0);
     end

@@ -65,6 +65,7 @@ if number_dims == 2
             rectangle('Position',[mask_min_x, mask_min_y, mask_max_x - mask_min_x, mask_max_y - mask_min_y],'EdgeColor', 'r', 'LineWidth', 3);
             title(['WM model, FVF = ' num2str(FVF) ', g-ratio = ' num2str(g_ratio)])
             set(gca, 'FontSize', 12)
+            pause(0.01);
         end
     end
 

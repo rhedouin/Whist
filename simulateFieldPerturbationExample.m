@@ -12,11 +12,13 @@ your_folder = [pwd,'/'];
 addpath(genpath(your_folder))
 
 %%%%%%%%%%%% Load a WM model with a single 2D axon
+% model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
+
+%%%%%%%%%%%% Load your WM model 
 % model_path = '/project/3015069.04/code/Whist/WMmodel/MyWMmodel.mat';
-model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
 
 %%%%%%%%%%%% Load a WM model with a single 3D axon
-% model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
+model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
 
 load(model_path)
 
@@ -24,8 +26,9 @@ number_dims = ndims(mask);
 model_parameters.dims = size(mask);
 
 plot_model = 1;
+
 % Create and plot your model
-[model, zoomed_model, FVF, g_ratio] = createModelFromData(axon_collection, mask, 1);
+[model, zoomed_model, FVF, g_ratio] = createModelFromData(axon_collection, mask, plot_model);
 
 %%%%%%%%%%% Set parameters
 % mask (required)
@@ -59,7 +62,7 @@ phi = 0;
 model_parameters.field_direction = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)];
 
 % TE (required)
-model_parameters.TE = (2:3:59)*1e-3;
+model_parameters.TE = (2:3:80)*1e-3;
 
 % optional, needed to include T1 effect in signal weights
 model_parameters.flip_angle = 20;
@@ -81,9 +84,9 @@ options.mask = mask;
 createHistogramFieldPerturbation(model, field, options);
 
 if number_dims == 2
-    plot2DFieldAndSignal(field, signal_original.total, model_parameters.field_direction)
+    plot2DFieldAndSignal(field, signal_original.total, model_parameters.TE, model_parameters.field_direction)
 elseif number_dims == 3
-    plot3DFieldAndSignal(field, signal_original.total, model_parameters.field_direction)
+    plot3DFieldAndSignal(field, signal_original.total, model_parameters.TE, model_parameters.field_direction)
 else
     error('dimension of the model should be 2 or 3');
 end
