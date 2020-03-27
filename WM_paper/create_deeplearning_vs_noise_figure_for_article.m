@@ -29,7 +29,7 @@ colors = linspecer(length(noise_list))
 figure(1)
 hold on
 for l = 1:length(noise_list)
-    plot(total_loss(:, l), '--', 'Color', colors(l, :), 'LineWidth', 3);
+    plot(total_loss(:, l), '--', 'Color', colors(l, :), 'LineWidth', 4);
     h(l) = plot(total_val_loss(:, l), '-', 'Color', colors(l, :), 'LineWidth', 4);
 end
 

@@ -3,18 +3,19 @@ close all
 cd /project/3015069.04/temp/Jobs
 
 model_inputfolder = '/project/3015069.04/WM_Models/N400/';
-signal_outputfolder = '/project/3015069.04/signal_components/multi_orientations/BrainSample2/';
+signal_outputfolder = '/project/3015069.04/signal_components/multi_orientations/theorically_good_16_rotations/';
 
 rotation_folder = '/project/3015069.04/data/rotations/';
-req_mem   = 6e9;
+req_mem   = 8e9;
 req_etime = 10000;
 
 %%%%%%%%%%%% Need to be check
-load([rotation_folder 'BrainSample2_rotations_ref_2_orientations.mat']);
+load([rotation_folder 'theorically_good_16_rotations.mat']);
 load([rotation_folder '20_fiber_orientations_rotations.mat']);
 
 % dict_params.TE = linspace(1.8,94.6,30)*1e-3;
-dict_params.TE = linspace(1.7,35.25,12)*1e-3;
+% dict_params.TE = linspace(1.7,35.25,12)*1e-3;
+dict_params.TE = linspace(2.4,50.7,12)*1e-3;
 
 %%%%%%%%%%%%
 
@@ -41,17 +42,17 @@ it = 0;
 nb_replica = 8;
 
 for k = 1:nb_replica
-    it = it + 1;
     suffix = ['_train' num2str(k)];
     for FVF = 10 : 10 : 80
         
         tic()
         filename = [signal_outputfolder 'FVF' num2str(FVF) '_N400' suffix '/' 'Signal_FVF' num2str(FVF) suffix '.mat'];
+%         out = computeAndSaveSignalFromModels(FVF, suffix, model_inputfolder, signal_outputfolder, dict_params);
+
         if ~isfile(filename)
             it = it +1
             job{it} = qsubfeval(@computeAndSaveSignalFromModels, FVF, suffix, model_inputfolder, signal_outputfolder, dict_params, 'memreq',  req_mem,  'timreq',  req_etime);
         end
-%         out = computeAndSaveSignalFromModels(FVF, suffix, model_inputfolder, signal_outputfolder, dict_params);
        
         toc()
     end
