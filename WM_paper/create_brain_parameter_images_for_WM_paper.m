@@ -19,6 +19,10 @@ for k = 1:length(parameter_list)
 
     parameter_map_mean.(parameter)(mask==0) = 10000;
     
+    if ((k == 3) || (k == 4))
+        parameter_map_mean.(parameter) = parameter_map_mean.(parameter)*1e3;
+    end
+    
     parameter_map_mean_permute.(parameter) = permute(parameter_map_mean.(parameter), [2 3 1]);
     parameter_map_mean_permute.(parameter) = parameter_map_mean_permute.(parameter)(end:-1:1, :, :);
 end
@@ -53,11 +57,11 @@ for k = 1:length(parameter_list)
     elseif k == 2
         caxis([0.5 0.85])
     elseif k == 3
-        caxis([0 0.02])
-        title(cb(k), {'seconds', ''})
+        caxis([0 20])
+        title(cb(k), {'ms', ''})
     elseif k == 4
-        caxis([0 0.1])
-        title(cb(k), {'seconds', ''})
+        caxis([0 100])
+        title(cb(k), {'ms', ''})
     elseif k == 5
         caxis([0 3])
     elseif k == 6
@@ -88,14 +92,14 @@ imagesc(squeeze(magn_TE1_permute(1+edge_x:end-edge_x, yslice, 1+edge_z:end-edge_
 
 % title('magn_TE1')
 colormap('gray');
-cb = colorbar;
-x1=get(gca,'position');
-x=get(cb,'Position');
-x(2) = 0.2;
-x(4) = 0.6;
-x(3) = 0.03;
-set(cb,'Position',x)
-set(gca,'position',x1)
+% % cb = colorbar;
+% x1=get(gca,'position');
+% x=get(cb,'Position');
+% x(2) = 0.2;
+% x(4) = 0.6;
+% x(3) = 0.03;
+% set(cb,'Position',x)
+% set(gca,'position',x1)
 
 caxis([800 1800])
 
@@ -108,14 +112,14 @@ imagesc(squeeze(t1_permute(1+edge_x:end-edge_x, yslice, 1+edge_z:end-edge_z)));
 
 % title('mp2rage')
 colormap('gray');
-cb = colorbar;
-x1=get(gca,'position');
-x=get(cb,'Position');
-x(2) = 0.2;
-x(4) = 0.6;
-x(3) = 0.03;
-set(cb,'Position',x)
-set(gca,'position',x1)
+% cb = colorbar;
+% x1=get(gca,'position');
+% x=get(cb,'Position');
+% x(2) = 0.2;
+% x(4) = 0.6;
+% x(3) = 0.03;
+% set(cb,'Position',x)
+% set(gca,'position',x1)
 
 caxis([0.2 0.7])
 

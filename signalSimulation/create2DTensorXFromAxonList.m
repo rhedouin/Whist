@@ -34,27 +34,57 @@ for j = 1:length(axonlist)
     max_sub_myelin = max(sub_myelin);
     
     extra_space = 10;   
-    small_map_model_parameters.dims = max_sub_myelin - min_sub_myelin + 2*extra_space;
+    small_map_model_dims = max_sub_myelin - min_sub_myelin + 2*extra_space;
     
     new_sub_myelin = sub_myelin - min_sub_myelin + extra_space;
     new_sub_intra_axonal = myelin2axon(new_sub_myelin);
 
-    new_ind_myelin = sub2ind(small_map_model_parameters.dims,new_sub_myelin(:,1),new_sub_myelin(:,2));  
-    new_ind_axon = sub2ind(small_map_model_parameters.dims,new_sub_intra_axonal(:,1),new_sub_intra_axonal(:,2));    
+    new_ind_myelin = sub2ind(small_map_model_dims, new_sub_myelin(:,1),new_sub_myelin(:,2));  
+    new_ind_axon = sub2ind(small_map_model_dims, new_sub_intra_axonal(:,1),new_sub_intra_axonal(:,2));    
     
-    small_map = zeros(small_map_model_parameters.dims);
+    small_map = zeros(small_map_model_dims);
     small_map(new_ind_myelin) = 1;
     small_map(new_ind_axon) = 2;
     
     map(ind_myelin) = 1;
-    map(ind_intra_axonal) = 2;   
-
+    map(ind_intra_axonal) = 2;
+    
     total_model = total_model + map;
-
+    
     sigma=2;
     
-    smooth_small_map = imgaussfilt(small_map,sigma, 'FilterSize',5);   
+    smooth_small_map = imgaussfilt(small_map,sigma, 'FilterSize',5);
     [gradient_magnitude,gradient_direction] = imgradient(smooth_small_map);
+    
+    plot_gradient = 0;
+    if plot_gradient
+        [Gx,Gy] = gradient(smooth_small_map);
+        [x,y] = ndgrid(1:small_map_model_dims(1), 1:small_map_model_dims(2));
+        
+        step = 2;
+        
+        keyboard;
+        
+        Gx_normed = 3*Gx./(sqrt(Gx.^2 + Gy.^2));
+        Gy_normed = 3*Gy./(sqrt(Gx.^2 + Gy.^2));
+        %
+        Gx_normed(small_map ~= 1) = 0;
+        Gy_normed(small_map ~= 1) = 0;
+        
+        x = x(1:step:end, 1:step:end);
+        y = y(1:step:end, 1:step:end);
+        
+        Gx_normed = Gx_normed(1:step:end, 1:step:end);
+        Gy_normed = Gy_normed(1:step:end, 1:step:end);
+        
+        figure
+        imagesc(smooth_small_map)
+        axis off
+        hold on
+        quiver(y,x,Gx_normed,Gy_normed, 'r', 'AutoScale', 'off', 'LineWidth', 2, 'ShowArrowHead', 'on', 'MaxHeadSize', 0.3)
+        
+        keyboard;
+    end
     
     % Counting variable for smoothing process
     c=1;
@@ -65,7 +95,7 @@ for j = 1:length(axonlist)
     end
     
     gradient_direction = (pi/180)*(gradient_direction + 90);
-
+    
     for k = 1:size(new_sub_myelin,1)
         phi = mod(gradient_direction(new_sub_myelin(k,1),new_sub_myelin(k,2)) + 2*pi, 2*pi) - pi;
 

@@ -151,9 +151,7 @@ for k = 1: lGRatio
                     end
  
                 elseif and(dict_params.rotations == 1, dict_params.dispersion == 0)
-
-                    for o = 1:lRot
-                                                
+                    for o = 1:lRot                     
                         current_dir =  sphere_rotations(:,:,o) * main_dir;
                         model_parameters.current_dir = current_dir;
 
