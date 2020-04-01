@@ -5,7 +5,7 @@
 % You can load your own WM model create by createOneWMModelExample.m
  
 clear
-close all
+% close all
 
 your_folder = [pwd,'/']; 
 % location of the toolbox

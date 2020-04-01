@@ -32,10 +32,10 @@ Fx = fftn(XTensor3d(:,:,:,4));
 Res =       Res+((H_Vec(2)^2)/3 - H_Vec(2)*ky .* kH_over_k2) .* Fx;
 clear Fx
 Fx = fftn(XTensor3d(:,:,:,5));
-Res =       Res+(2*(H_Vec(2)*H_Vec(3))/3 - (H_Vec(2)*kz + H_Vec(3)*ky) .* kH_over_k2) .* Fx;
+Res =       Res+(2*(H_Vec(2)*H_Vec(3))/3 - (H_Vec(2)*kz + H_Vec(3)*ky) .* kH_over_k2) .* Fx(:,:,:,1) ;
 clear Fx ky
-Fx = fftn(XTensor3d(:,:,:,6));
-Res =       Res+((H_Vec(3)^2)/3 - H_Vec(3)*kz .* kH_over_k2) .* Fx;
+Fx(:,:,:,1) = fftn(XTensor3d(:,:,:,6));
+Res =       Res+((H_Vec(3)^2)/3 - H_Vec(3)*kz .* kH_over_k2) .* Fx(:,:,:,1);
 clear Fx XTensor3d kz k2 kH_over_k2 
 
 
