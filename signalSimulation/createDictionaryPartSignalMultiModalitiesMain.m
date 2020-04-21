@@ -1,13 +1,13 @@
 clear
 % close all
 
-req_mem   = 6e9;
-req_etime = 10000;
+req_mem   = 3e9;
+req_etime = 1000;
 
 base_folder = '/project/3015069.04/';
 job_folder = [base_folder 'temp/Jobs'];
-signal_folder = [base_folder 'signal_components/multi_orientations/theorically_good_16_rotations/'];
-dico_folder = [base_folder 'dictionaries/multi_orientations/theorically_good_16_rotations/'];
+signal_folder = [base_folder 'signal_components/single_orientation/BrainSample2/'];
+dico_folder = [base_folder 'dictionaries/single_orientation/BrainSample2/'];
 
 cd(job_folder)
 
@@ -20,7 +20,7 @@ T2ExtraAxonalRange = (20 : 20 : 100)* 1e-3;
 weightRange = [0.5 1 1.5 2 2.5 3];
 
 nb_TE = 12;
-nb_rotations = 16;
+nb_rotations = 1;
 
 noise = 0;
 nb_replic = 8;
@@ -36,7 +36,7 @@ options.coordinate.polyfit_polar = 0;
 options.coordinate.polyfit_cartesian = 1;
 options.coordinate.polyfit_cartesian_demean = 0;
 
-noise_list = [0, 0.01, 0.02];
+noise_list = [0.04];
 
 replic_list = [1, 2, 3, 4, 5, 6, 7, 8];
 
@@ -54,7 +54,6 @@ for noise = noise_list
             
             FVF_folder = [signal_folder 'FVF' num2str(FVF) '_N400' suffix '/'];
             signal_path = [FVF_folder 'Signal_FVF' num2str(FVF) suffix '.mat'];
-            %                 createDictionaryPartSignalMultiModalities(signal_path, output_folder, experience_name, T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF, nb_orientations, num, options);
             
             if noise == 0.005
                 prefix_name = 'SignalWithNoise05';
@@ -73,8 +72,8 @@ for noise = noise_list
             if ~isfile(filename)
                 filename
                 tic()
-%                   createDictionaryPartSignalMultiModalities(signal_path, output_folder, experience_name, T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF, nb_orientations, num, options);
-                job{it} = qsubfeval(@createDictionaryPartSignalMultiModalities, signal_path, output_folder, experience_name, T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF, nb_rotations, num, options, 'memreq',  req_mem,  'timreq',  req_etime);
+%                   createDictionaryPartSignalMultiModalities(signal_path, output_folder, experience_name, T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF, nb_rotations, num, options);
+                  job{it} = qsubfeval(@createDictionaryPartSignalMultiModalities, signal_path, output_folder, experience_name, T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF, nb_rotations, num, options, 'memreq',  req_mem,  'timreq',  req_etime);
                 toc()
             end
         end

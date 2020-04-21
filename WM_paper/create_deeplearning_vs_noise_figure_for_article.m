@@ -1,16 +1,16 @@
 % test read json file
 clear
 close all
-base_folder = '/project/3015069.04/deep_learning/multi_orientations/Porcine2/lowres/';
+base_folder = '/project/3015069.04/deep_learning/multi_orientations/BrainSample2/';
 
 noise_list = {'0', '05',  '1', '2', '4'};
-nb_TE = 18;
+nb_TE = 12;
 
 for l = 1:length(noise_list)
 
     noise = noise_list{l};
     
-    current_folder = [base_folder 'SignalWithNoise' noise '_8rep_6orientations_' num2str(nb_TE) 'TE_Porcine2_fix_xa_large_FVF_20_directions_polyfit_cartesian_with_theta_with0reg/'];
+    current_folder = [base_folder 'SignalWithNoise' noise '_8rep_9rotations_' num2str(nb_TE) 'TE_BrainSample2_fix_xa_large_FVF_20_directions_polyfit_cartesian_with_theta_with0reg/'];
     json_file = [current_folder 'total_history.json'];
     
     fid = fopen(json_file);

@@ -143,6 +143,10 @@ for k = 1: lGRatio
                         end
                         
                         field = real(field_complex);          
+                        
+                        model = repmat(model, 1, 1, size(field,3));
+                        model_parameters.mask = repmat(model_parameters.mask, 1, 1, size(field,3));    
+                        
                         signal_components(k, l, m, n, 1, o) = reconstructSignalComponents(field, model, model_parameters);
 
                         clear field field_complex
@@ -186,7 +190,10 @@ for k = 1: lGRatio
                             
                             field = real(field_complex);
                             clear field_complex
-
+                            
+                            model = repmat(model, 1, 1, size(field,3));
+                            model_parameters.mask = repmat(model_parameters.mask, 1, 1, size(field,3));    
+                        
                             signal_components(k, l, m, n, o, p) = reconstructSignalComponents(field, model, model_parameters);
                             directionValues(:, k, l, m, n, o, p) = current_dir;
                             

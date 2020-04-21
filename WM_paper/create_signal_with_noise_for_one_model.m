@@ -1,6 +1,6 @@
 % Create nifti 10x10 from WM model
 clear
-close all
+% close all
 cd '/project/3015069.04/code/Whist';
 your_folder = [pwd,'/']; 
 % location of the toolbox
@@ -8,14 +8,15 @@ addpath(genpath(your_folder))
 
 model_base_folder = '/project/3015069.04/WM_Models/N400/';
 dict_folder = '/project/3015069.04/dictionaries/unique_value/';
+out_dict_folder = [dict_folder 'weight2/'];
 
 rotation_folder = '/project/3015069.04/data/rotations/';
-load([rotation_folder 'Porcine-2_lowres_rotation_ref_2_orientations.mat']);
-load([rotation_folder '20_fiber_orientations_no_rotation.mat']);
+load([rotation_folder 'BrainSample2_rotations_ref_2_orientations.mat']);
+load([rotation_folder '20_fiber_orientations_rotations.mat']);
 
 %%%%%%%%%%% Set parameters
 % myelin (required: T2, xi, xa)
-model_parameters.myelin.T2 = 15*1e-3;
+model_parameters.myelin.T2 = 16*1e-3;
 model_parameters.myelin.T1 = 300*1e-3;
 model_parameters.myelin.proton_density= 0.5; 
 
@@ -23,13 +24,13 @@ model_parameters.myelin.xi = -0.1;  % myelin anisotropic susceptibility (ppm)
 model_parameters.myelin.xa = -0.1;  % myelin isotropic susceptibility (ppm)
 
 % intra axonal (required: T2)
-model_parameters.intra_axonal.T2 = 50*1e-3;
+model_parameters.intra_axonal.T2 = 60*1e-3;
 model_parameters.intra_axonal.T1 = 1.5;
 model_parameters.intra_axonal.proton_density= 1; 
 model_parameters.intra_axonal.xi= 0; 
 
 % extra axonal (required: T2)
-model_parameters.extra_axonal.T2 = 50*1e-3;
+model_parameters.extra_axonal.T2 = 60*1e-3;
 model_parameters.extra_axonal.T1 = 1.5;
 model_parameters.extra_axonal.proton_density= 1; 
 model_parameters.extra_axonal.xi= 0; 
@@ -42,27 +43,29 @@ phi = 0;
 model_parameters.field_direction = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)];
 
 % TE (required)
-model_parameters.TE = (1.8:3.2:56.2)*1e-3;
+model_parameters.TE = (1.7:3.05:35.3)*1e-3;
 TE = model_parameters.TE;
-
-model_parameters.TE = (1:85)*1e-3;
-TE = model_parameters.TE ;
 
 % optional, needed to include T1 effect in signal weights
 model_parameters.flip_angle = 40;
 model_parameters.TR = 60*1e-3;
  
-model_parameters.include_proton_density = 1;
-model_parameters.include_T1_effect = 1;
+model_parameters.include_proton_density = 0;
+model_parameters.include_T1_effect = 0;
 
 % Estimate the relative weights of each compartment
 model_parameters = computeCompartmentSignalWeight(model_parameters);
+
+model_parameters.myelin.weight = 2;
+model_parameters.intra_axonal.weight = 1;
+model_parameters.extra_axonal.weight = 1;
+
 
 FVF_round = 70;
 gRatio_round = 65;
 
 nb_models = 8;
-nb_rotations = 6;
+nb_rotations = 9;
 nb_sample_per_model = 125;
 nb_TE = length(TE);
 
@@ -115,14 +118,16 @@ for noise = noise_list
             end
         end
     end
-    
     M = reshape(M, [10 10 10 length_total]);
+    size(M)
     
     cube_nii.img = single(M);
+    cube_nii.hdr.dime.dim(5) = length_total;
+    
     if noise == 0.005
-        save_untouch_nii(cube_nii, [dict_folder 'cube10_noise05.nii.gz'])
+        save_untouch_nii(cube_nii, [out_dict_folder 'cube10_noise05.nii.gz'])
     else
-        save_untouch_nii(cube_nii, [dict_folder 'cube10_noise' num2str(100*noise) '.nii.gz'])
+        save_untouch_nii(cube_nii, [out_dict_folder 'cube10_noise' num2str(100*noise) '.nii.gz'])
     end
 end
 

@@ -122,22 +122,19 @@ if ~isfield(model_params, 'dims')
 else
     [axon_collection, dims] = setupAxonsGrid(original_axon_collection, model_params.dims);
 end
+
 disp('done')
 if ~isfield(model_params, 'mask')
     model_params.mask = createAdaptedMask(axon_collection, dims);
 end
 
 [model, zoomed_model, FVF, g_ratio] = createModelFromData(axon_collection, model_params.mask, model_params.plot_model);
-keyboard;
 
 % Axon packing
 disp('process packing ...')
 [axon_collection, FVF_packed_model] = packAxons(axon_collection, model_params.mask, model_params.max_iteration, model_params.max_FVF, model_params.packing_speed, model_params.plot_model);
 disp('done')
 disp(['FVF packed model : ' num2str(FVF_packed_model)]);
-keyboard;
-beep
-axon_collection_save = axon_collection;
 
 % Axon dispersion (optional)
 if isfield(model_params, 'expected_FVF')
@@ -165,7 +162,7 @@ if isfield(model_params, 'expected_g_ratio')
 end
 
 [model, zoomed_model, FVF, g_ratio] = createModelFromData(axon_collection, model_params.mask, model_params.plot_model);
-keyboard;
+
 % Save model
 mask = model_params.mask;
 if model_params.save_model

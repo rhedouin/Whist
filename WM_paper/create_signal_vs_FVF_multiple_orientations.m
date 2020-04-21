@@ -96,7 +96,7 @@ for kFVF = 1:length(FVF_list)
         hold on
     end    
 end
-leg = legend(p, '10', '20', '30', '40', '50', '60', '70', '80');
+leg = legend(p, '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8');
 title(leg, 'FVF');
 leg.Location = 'southwest';
 leg.NumColumns = 2;

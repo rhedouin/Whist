@@ -4,8 +4,6 @@ function signal_components = reconstructSignalComponents(field, model, model_par
 N = length(model_parameters.TE);
 
 if ndims(field) == 3
-    model = repmat(model, 1, 1, size(field,3));
-    model_parameters.mask = repmat(model_parameters.mask, 1, 1, size(field,3));
     display('3D field')
 end
 

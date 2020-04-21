@@ -19,26 +19,37 @@ H_Vec = model_parameters.field_direction;
 kH_over_k2 = (H_Vec(1) * kx + H_Vec(2) * ky + H_Vec(3) * kz) ./ (eps + k2);
 clear k2
 
-Fx(:,:,:,1) = fftn(XTensor3d(:,:,:,1));
-Res =       ((H_Vec(1)^2)/3 - H_Vec(1)*kx .* kH_over_k2) .* Fx(:,:,:,1) ;
+display('fft1')
+Fx = fftn(XTensor3d(:,:,:,1));
+Res =       ((H_Vec(1)^2)/3 - H_Vec(1)*kx .* kH_over_k2) .* Fx ;
 clear Fx
-Fx(:,:,:,1) = fftn(XTensor3d(:,:,:,2));
-Res =       Res+(2*(H_Vec(1)*H_Vec(2))/3 - (H_Vec(1)*ky + H_Vec(2)*kx) .* kH_over_k2) .* Fx(:,:,:,1) ;
+
+display('fft2')
+Fx = fftn(XTensor3d(:,:,:,2));
+Res =       Res+(2*(H_Vec(1)*H_Vec(2))/3 - (H_Vec(1)*ky + H_Vec(2)*kx) .* kH_over_k2) .* Fx;
 clear Fx
-Fx(:,:,:,1) = fftn(XTensor3d(:,:,:,3));
-Res =       Res+(2*(H_Vec(1)*H_Vec(3))/3 - (H_Vec(1)*kz + H_Vec(3)*kx) .* kH_over_k2) .* Fx(:,:,:,1) ;
+
+display('fft3')
+Fx= fftn(XTensor3d(:,:,:,3));
+Res =       Res+(2*(H_Vec(1)*H_Vec(3))/3 - (H_Vec(1)*kz + H_Vec(3)*kx) .* kH_over_k2) .* Fx;
 clear Fx kx
-Fx(:,:,:,1) = fftn(XTensor3d(:,:,:,4));
-Res =       Res+((H_Vec(2)^2)/3 - H_Vec(2)*ky .* kH_over_k2) .* Fx(:,:,:,1) ;
+
+display('fft4')
+Fx = fftn(XTensor3d(:,:,:,4));
+Res =       Res+((H_Vec(2)^2)/3 - H_Vec(2)*ky .* kH_over_k2) .* Fx;
 clear Fx
-Fx(:,:,:,1) = fftn(XTensor3d(:,:,:,5));
-Res =       Res+(2*(H_Vec(2)*H_Vec(3))/3 - (H_Vec(2)*kz + H_Vec(3)*ky) .* kH_over_k2) .* Fx(:,:,:,1) ;
+
+display('fft5')
+Fx = fftn(XTensor3d(:,:,:,5));
+Res =       Res+(2*(H_Vec(2)*H_Vec(3))/3 - (H_Vec(2)*kz + H_Vec(3)*ky) .* kH_over_k2) .* Fx;
 clear Fx ky
-Fx(:,:,:,1) = fftn(XTensor3d(:,:,:,6));
-Res =       Res+((H_Vec(3)^2)/3 - H_Vec(3)*kz .* kH_over_k2) .* Fx(:,:,:,1);
+
+display('fft6')
+Fx = fftn(XTensor3d(:,:,:,6));
+Res =       Res+((H_Vec(3)^2)/3 - H_Vec(3)*kz .* kH_over_k2) .* Fx;
 clear Fx XTensor3d kz k2 kH_over_k2 
 
-
+display('ifft')
 TotalField = ifftn(Res);
 clear Res
 TotalField = TotalField*gamma*model_parameters.B0;

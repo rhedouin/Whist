@@ -1,4 +1,4 @@
-function out = createDictionaryPartSignalMultiModalities(signal_path, output_folder, experience_name, T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF, nb_orientations, replic, dict_options)
+function out = createDictionaryPartSignalMultiModalities(signal_path, output_folder, experience_name, T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF, nb_rotations, replic, dict_options)
 
 load(signal_path); 
 TE = TE(1:nb_TE); 
@@ -16,7 +16,7 @@ if dict_options.include_theta
 else
    length_one_orientation = 2*nb_TE;
 end
-lVec = nb_orientations * length_one_orientation;
+lVec = nb_rotations * length_one_orientation;
 
 coordinate_total_list = fieldnames(dict_options.coordinate);
 it = 0;
@@ -60,7 +60,7 @@ for l = 1:lgRatio
                                 tempSignalVector.(coordinate) = zeros(lVec, 1);
                             end
                                                         
-                            for rot = 1:nb_orientations
+                            for rot = 1:nb_rotations
                                 Signal0 = signal_components(l,m,n,o,rot);
 
                                 SignalWithR2 = exp(-TE/T2IntraExtraAxonal).*Signal0.intra_axonal.signal(1:nb_TE) + weight*exp(-TE/T2Myelin).*Signal0.myelin.signal(1:nb_TE) + ...
@@ -120,7 +120,7 @@ for l = 1:lgRatio
                                 
                             end
 
-                            main_direction = signal_components(l,m,n,o,6).current_dir;
+                            main_direction = signal_components(l,m,n,o,1).current_dir;
 
                             for kCoordinate = 1:lCoordinate
                                 coordinate = coordinate_list{kCoordinate};
@@ -149,7 +149,7 @@ toc()
 gRatio = gRatioRange/100;
 
 infoDico = 'In order, gRatio, xiMyelin, xaMyelin, dir, T2Myelin, T2IntraExtraAxonal, weight';
-infoSignal = ['concatenation of ' num2str(nb_orientations) ' rotations each composed of the theta angle (B0 angle) 12 TE real and imag part of the signal with a polyfit normalization phase'];
+infoSignal = ['concatenation of ' num2str(nb_rotations) ' rotations each composed of the theta angle (B0 angle) 12 TE real and imag part of the signal with a polyfit normalization phase'];
 
 if noise == 0.005
     prefix_name = 'SignalWithNoise05';
@@ -166,8 +166,8 @@ end
 for kCoordinate = 1:lCoordinate
     coordinate = coordinate_list{kCoordinate};
 
-    base_name = [prefix_name '_FVF' num2str(FVF) '_replic' num2str(replic) '_' num2str(nb_orientations) ...
-                 'orientations_' num2str(nb_TE)  'TE_' experience_name '_fix_xa_' coordinate '_'  suffix_theta];
+    base_name = [prefix_name '_FVF' num2str(FVF) '_replic' num2str(replic) '_' num2str(nb_rotations) ...
+                 'rotations_' num2str(nb_TE)  'TE_' experience_name '_fix_xa_' coordinate '_'  suffix_theta];
     signal_name = [base_name '.h5py'];
 
     SignalValues = single(SignalValuesMultiCoordinates.(coordinate));

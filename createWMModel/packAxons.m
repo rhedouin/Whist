@@ -7,7 +7,6 @@ dims = size(mask);
 disp('Packing in process...')
 
 FVF(1) = 0;
-pass = 0;
 for iter = 1:max_iteration
     disp(['Iteration : ' num2str(iter)]);
     if (mod(iter, 10)) == 0
@@ -18,10 +17,6 @@ for iter = 1:max_iteration
         pause(0.1)
         if(FVF > max_FVF)
             break;
-        end
-        if (FVF > 0.6) && pass == 0
-            keyboard;
-            pass = 1;
         end
     end
     axon_collection = packAxonsOneIteration(axon_collection, dims, FVF, step);
