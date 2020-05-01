@@ -34,7 +34,6 @@ function [signal, field] = simulateSignalFromModel(axon_collection, model_parame
 
 number_dims = length(model_parameters.dims);
 
-keyboard;
 if  number_dims == 2
     [tensor_X, model]  = create2DTensorXFromAxonList(axon_collection, model_parameters);
     
@@ -43,9 +42,6 @@ if  number_dims == 2
 
 elseif number_dims == 3
     [tensor_X, model]  = create3DTensorXFromAxonList(axon_collection, model_parameters);
-    
-    mask_replic = repmat(model_parameters.mask,[1 1 1 6]);
-    tensor_X(~mask_replic) = 0;
     
     field_complex = createFieldFrom3DTensorX(tensor_X, model_parameters);
     field = real(field_complex);    
@@ -80,7 +76,7 @@ signal.myelin = model_parameters.myelin.weight * exp(-model_parameters.TE / mode
 signal.extra_axonal = model_parameters.extra_axonal.weight * exp(-model_parameters.TE / model_parameters.extra_axonal.T2).*signal.extra_axonal / nb_pixel;
 
 signal.total = signal.intra_axonal + signal.myelin + signal.extra_axonal;
-signal.total_normalized = signal.total  / abs(signal.total(1));
+
 end
 
 

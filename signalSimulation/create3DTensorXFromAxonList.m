@@ -5,11 +5,11 @@ total_X = zeros(model_params.dims(1),model_params.dims(2),3,3,'single');
 myelin_Xi = [model_params.myelin.xi 0 0; 0 model_params.myelin.xi 0; 0 0 model_params.myelin.xi];
 myelin_Xa = [model_params.myelin.xa 0 0; 0 -model_params.myelin.xa/2 0; 0 0 -model_params.myelin.xa/2];
 
-if isfield(model_params, 'intra_axonal') && isfield(model_params.intra_axonal, 'xi')
+if isfield(model_params.intra_axonal, 'xi')
     intra_axonal_Xi = [model_params.intra_axonal.xi 0 0; 0 model_params.intra_axonal.xi 0; 0 0 model_params.intra_axonal.xi];
 end
 
-if isfield(model_params, 'extra_axonal') && isfield(model_params.extra_axonal, 'xi')
+if isfield(model_params.extra_axonal, 'xi')
     extra_axonal_Xi = [model_params.extra_axonal.xi 0 0; 0 model_params.extra_axonal.xi 0; 0 0 model_params.extra_axonal.xi];
     total_X = permute(repmat(extra_axonal_Xi, [1 1 model_params.dims]), [3 4 5 1 2]);
 end
@@ -104,7 +104,7 @@ for j = 1:length(axonlist)
         thetamap_3D(sub_myelin(k,1),sub_myelin(k,2),sub_myelin(k,3)) = angle( exp(1i*theta_rot) );     
     end
     
-    if isfield(model_params, 'intra_axonal') && isfield(model_params.intra_axonal, 'xi')
+    if isfield(model_params.intra_axonal, 'xi')
         for k = 1:size(sub_intra_axonal,1)
             total_X(sub_intra_axonal(k,1),sub_intra_axonal(k,2),sub_intra_axonal(k,3), :,:) = intra_axonal_Xi;
         end

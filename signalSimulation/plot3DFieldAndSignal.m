@@ -1,4 +1,4 @@
-function out = plot3DFieldAndSignal(field, signal, field_direction)
+function out = plot3DFieldAndSignal(field, signal, TE, field_direction)
 % plot signal and field
 
 h = figure('Name', 'Field perturbation and GRE signals');
@@ -68,14 +68,14 @@ text(-0.5,1.5,0,'B0 orientation', 'FontWeight', 'bold', 'FontSize', 12)
 set(gca, 'FontSize', 12);
 
 subplot(235)
-plot(magn_signal, 'LineWidth', 3)
+plot(TE, magn_signal, 'LineWidth', 3)
 xlabel('echo time')
 ylabel('|S(t)|')
 title('Signal magnitude', 'FontWeight', 'bold')
 set(gca, 'FontSize', 12);
 
 subplot(236)
-plot(phase_signal, 'LineWidth', 3)
+plot(TE, phase_signal, 'LineWidth', 3)
 xlabel('echo time')
 ylabel('phase(S(t))')
 

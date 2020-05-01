@@ -6,11 +6,11 @@ total_X = zeros(model_parameters.dims(1),model_parameters.dims(2),3,3);
 myelin_Xi = [model_parameters.myelin.xi 0 0; 0 model_parameters.myelin.xi 0; 0 0 model_parameters.myelin.xi];
 myelin_Xa = [model_parameters.myelin.xa 0 0; 0 -model_parameters.myelin.xa/2 0; 0 0 -model_parameters.myelin.xa/2];
 
-if (isfield(model_parameters, 'intra_axonal') && isfield(model_parameters.intra_axonal, 'xi')) 
+if isfield(model_parameters.intra_axonal, 'xi')
     intra_axonal_Xi = [model_parameters.intra_axonal.xi 0 0; 0 model_parameters.intra_axonal.xi 0; 0 0 model_parameters.intra_axonal.xi];
 end
 
-if (isfield(model_parameters, 'extra_axonal') && isfield(model_parameters.extra_axonal, 'xi')) 
+if isfield(model_parameters.extra_axonal, 'xi')
     extra_axonal_Xi = [model_parameters.extra_axonal.xi 0 0; 0 model_parameters.extra_axonal.xi 0; 0 0 model_parameters.extra_axonal.xi];
     total_X = permute(repmat(extra_axonal_Xi, [1 1 model_parameters.dims]), [3 4 1 2]);
 end
@@ -34,57 +34,27 @@ for j = 1:length(axonlist)
     max_sub_myelin = max(sub_myelin);
     
     extra_space = 10;   
-    small_map_model_dims = max_sub_myelin - min_sub_myelin + 2*extra_space;
+    small_map_model_parameters.dims = max_sub_myelin - min_sub_myelin + 2*extra_space;
     
     new_sub_myelin = sub_myelin - min_sub_myelin + extra_space;
     new_sub_intra_axonal = myelin2axon(new_sub_myelin);
 
-    new_ind_myelin = sub2ind(small_map_model_dims, new_sub_myelin(:,1),new_sub_myelin(:,2));  
-    new_ind_axon = sub2ind(small_map_model_dims, new_sub_intra_axonal(:,1),new_sub_intra_axonal(:,2));    
+    new_ind_myelin = sub2ind(small_map_model_parameters.dims,new_sub_myelin(:,1),new_sub_myelin(:,2));  
+    new_ind_axon = sub2ind(small_map_model_parameters.dims,new_sub_intra_axonal(:,1),new_sub_intra_axonal(:,2));    
     
-    small_map = zeros(small_map_model_dims);
+    small_map = zeros(small_map_model_parameters.dims);
     small_map(new_ind_myelin) = 1;
     small_map(new_ind_axon) = 2;
     
     map(ind_myelin) = 1;
-    map(ind_intra_axonal) = 2;
-    
+    map(ind_intra_axonal) = 2;   
+
     total_model = total_model + map;
-    
+
     sigma=2;
     
-    smooth_small_map = imgaussfilt(small_map,sigma, 'FilterSize',5);
+    smooth_small_map = imgaussfilt(small_map,sigma, 'FilterSize',5);   
     [gradient_magnitude,gradient_direction] = imgradient(smooth_small_map);
-    
-    plot_gradient = 0;
-    if plot_gradient
-        [Gx,Gy] = gradient(smooth_small_map);
-        [x,y] = ndgrid(1:small_map_model_dims(1), 1:small_map_model_dims(2));
-        
-        step = 2;
-        
-        keyboard;
-        
-        Gx_normed = 3*Gx./(sqrt(Gx.^2 + Gy.^2));
-        Gy_normed = 3*Gy./(sqrt(Gx.^2 + Gy.^2));
-        %
-        Gx_normed(small_map ~= 1) = 0;
-        Gy_normed(small_map ~= 1) = 0;
-        
-        x = x(1:step:end, 1:step:end);
-        y = y(1:step:end, 1:step:end);
-        
-        Gx_normed = Gx_normed(1:step:end, 1:step:end);
-        Gy_normed = Gy_normed(1:step:end, 1:step:end);
-        
-        figure
-        imagesc(smooth_small_map)
-        axis off
-        hold on
-        quiver(y,x,Gx_normed,Gy_normed, 'r', 'AutoScale', 'off', 'LineWidth', 2, 'ShowArrowHead', 'on', 'MaxHeadSize', 0.3)
-        
-        keyboard;
-    end
     
     % Counting variable for smoothing process
     c=1;
@@ -95,7 +65,7 @@ for j = 1:length(axonlist)
     end
     
     gradient_direction = (pi/180)*(gradient_direction + 90);
-    
+
     for k = 1:size(new_sub_myelin,1)
         phi = mod(gradient_direction(new_sub_myelin(k,1),new_sub_myelin(k,2)) + 2*pi, 2*pi) - pi;
 
@@ -107,7 +77,7 @@ for j = 1:length(axonlist)
         end
     end
     
-    if (isfield(model_parameters, 'intra_axonal') && isfield(model_parameters.intra_axonal, 'xi'))
+    if isfield(model_parameters.intra_axonal, 'xi')
         for k = 1:size(sub_intra_axonal,1)
             total_X(sub_intra_axonal(k,1),sub_intra_axonal(k,2),:,:) = intra_axonal_Xi;
         end
@@ -125,8 +95,8 @@ tensor_X(:,:,5) = total_X(:,:,2,3);
 tensor_X(:,:,6) = total_X(:,:,3,3);
 
 if  ~(isfield(model_parameters, 'no_mask_tensor_map') && model_parameters.no_mask_tensor_map == 1)
-        mask_replic = repmat(model_parameters.mask,[1 1 6]);
-        tensor_X(~mask_replic) = 0;
+    mask_replic = repmat(model_parameters.mask,[1 1 6]);
+    tensor_X(~mask_replic) = 0;
 end
 
 end

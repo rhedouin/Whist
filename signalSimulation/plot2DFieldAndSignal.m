@@ -1,9 +1,9 @@
-function out = plot2DFieldAndSignal(field, signal, field_direction)
+function out = plot2DFieldAndSignal(field, signal, TE, field_direction)
 % plot signal and field
 
 h = figure('Name', 'Field perturbation and GRE signals');
-position = [10 10 1090 890];
-h.Position = position;
+% position = [10 10 1090 890];
+% h.Position = position;
 
 magn_signal = abs(signal);
 phase_signal = phase(signal);
@@ -17,7 +17,7 @@ title(cb,'Hertz');
 
 caxis([-10 10])
 title('Field perturbation', 'FontWeight', 'bold')
-set(gca, 'FontSize', 15);
+set(gca, 'FontSize', 12);
 
 
 subplot(223)
@@ -43,7 +43,7 @@ text(-0.5,1.5,0,'B0 orientation', 'FontWeight', 'bold', 'FontSize', 12)
 set(gca, 'FontSize', 12);
 
 subplot(222)
-plot(magn_signal, 'LineWidth', 3)
+plot(TE, magn_signal, 'LineWidth', 3)
 xlabel('echo time')
 ylabel('|S(t)|')
 title('Signal magnitude', 'FontWeight', 'bold')
@@ -51,7 +51,7 @@ set(gca, 'FontSize', 12);
 
 subplot(224)
 
-plot(phase_signal, 'LineWidth', 3)
+plot(TE, phase_signal, 'LineWidth', 3)
 xlabel('echo time')
 ylabel('phase(S(t))')
 
