@@ -2,12 +2,12 @@
 clear
 close all
 
-suffix = '_20_directions_polyfit_cartesian_with_theta_noise4';
+suffix = '_fix_xa';
 
 base_folder = ['/project/3015069.01/derived/BrainSample-2/ses-03/gre_renaud/concatenate_signals_3_orientations/parameter_maps/noise4/'];
 
 % loop all orientations
-label_list = {'FVF', 'gRatio', 'xiMyelin', 'T2IntraExtraAxonal', 'T2Myelin', 'weight'};
+label_list = {'FVF', 'gRatio', 'xi', 'T2myel', 'T2out', 'weight'};
 prefix = 'BrainSample-2_ses-03_';
 fa_list = {'05', '10', '15', '20', '35', '60'};
 for k = 1:length(label_list)
@@ -30,12 +30,12 @@ for k = 1:length(label_list)
     map_nii.img = mean_map;
     mean_folder = [base_folder 'mean/'];
     mkdir(mean_folder);
-    save_untouch_nii(map_nii, [mean_folder prefix label_list{k} '_mean' suffix '.nii.gz'])
+    save_untouch_nii(map_nii, [mean_folder prefix label_list{k} suffix '_mean.nii.gz'])
 
     map_nii.img = std_map;
     std_folder = [base_folder 'std/'];
     mkdir(std_folder);
-    save_untouch_nii(map_nii, [std_folder  prefix label_list{k} '_std' suffix  '.nii.gz'])
+    save_untouch_nii(map_nii, [std_folder  prefix label_list{k} suffix '_std.nii.gz'])
 end
 
 

@@ -21,24 +21,25 @@ for k = 1:length(parameter_list)
         parameter_map.(parameter) = parameter_map.(parameter)*1e3;
     end
     
-    parameter_map_permute.(parameter) = permute(parameter_map.(parameter), [2 3 1]);
-    parameter_map_permute.(parameter) = parameter_map_permute.(parameter)(end:-1:1, :, :);
+    parameter_map_permute.(parameter) = permute(parameter_map.(parameter), [2 1]);
+    parameter_map_permute.(parameter) = parameter_map_permute.(parameter)(end:-1:1, end:-1:1, :);
 end
 
 xslice = 0;
-yslice = 65;
+yslice = 128 - 65;
 zslice = 128 - 65;
 
-edge_x = 30;
-edge_z = 25;
+edge_x = 0;
 edge_y = 0;
+edge_z = 20;
+
 
 for k = 1:length(parameter_list)
     parameter = parameter_list{k};
     
     figure('Name',parameter)
-%     imagesc(squeeze(parameter_map_permute.(parameter)(1+edge_x:end-edge_x, 1+edge_y:end-edge_y, zslice)));
-    imagesc(squeeze(parameter_map_permute.(parameter)(1+edge_x:end-edge_x, yslice, 1+edge_z:end-edge_z)));
+    imagesc(squeeze(parameter_map_permute.(parameter)(1+edge_x:end-edge_x, 1+edge_y:end-edge_y, zslice)));
+%     imagesc(squeeze(parameter_map_permute.(parameter)(1+edge_x:end-edge_x, yslice, 1+edge_z:end-edge_z)));
     colormap('gray');
     cb(k) = colorbar('south');
     x1=get(gca,'position');
@@ -68,6 +69,7 @@ for k = 1:length(parameter_list)
     axis off
     %     title(parameter)
     set(gca, 'FontSize', 20)
+    return;
 
 end
 

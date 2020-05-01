@@ -110,23 +110,25 @@ for k = 1:length(theta_list)
             
             figure(k+10)
             subplot(221)
-            imagesc(field_2D_dispersion(:,:,1));
+            imagesc(field_2D(:,:,1));
             colorbar
             caxis([-5 8])
             subplot(222)
-            imagesc(field_2D_dispersion(:,:,2));
+            imagesc(field_2D(:,:,2));
             colorbar
             caxis([-5 8])
             subplot(223)
-            imagesc(field_2D_dispersion(:,:,3));
+            imagesc(field_2D(:,:,3));
             colorbar
             caxis([-5 8])
             subplot(224)
-            imagesc(field_2D_dispersion(:,:,4));
+            imagesc(field_2D(:,:,4));
             colorbar
             caxis([-5 8])
 
-            options.mask = mask_2D_replicate;          
+
+            options.mask = mask_2D_replicate;
+            
             options.edges = (-15:0.2:15);
             
             figure(k)
@@ -138,19 +140,19 @@ for k = 1:length(theta_list)
             options.keep_figure = 1;
             %             hist_2D{k,l,m} = createHistogramFieldPerturbation(model_2D_replicate, field_2D_dispersion, options);
             options.mask = mask_2D;
-            hist_2D{k,l,m} = createHistogramFieldPerturbation(model_2D_replicate, field_2D_dispersion, options);
+            hist_2D{k,l,m} = createHistogramFieldPerturbation(model_2D, field_2D, options);
          
             
             d(k,l,m) = sum((hist_2D{k,l,m}.intra_axonal - hist_3D{k}.intra_axonal).^2 + ...
                            (hist_2D{k,l,m}.extra_axonal - hist_3D{k}.extra_axonal).^2 + ...
                            (hist_2D{k,l,m}.myelin - hist_3D{k}.myelin).^2)
+              end
+              return;
         end
     end
     clear model_2D mask_2D options
 end
-              return;
-
-% save([twoD_folder 'distance_l2_2D_vs_3D_' ext '.mat'], 'd')
+save([twoD_folder 'distance_l2_2D_vs_3D_' ext '.mat'], 'd')
 
 
 

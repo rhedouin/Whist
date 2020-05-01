@@ -34,6 +34,7 @@ function [signal, field] = simulateSignalFromModel(axon_collection, model_parame
 
 number_dims = length(model_parameters.dims);
 
+keyboard;
 if  number_dims == 2
     [tensor_X, model]  = create2DTensorXFromAxonList(axon_collection, model_parameters);
     

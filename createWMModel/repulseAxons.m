@@ -13,7 +13,7 @@ N = length(axon_collection);
 for k = 1:N
     currentSize = max(max(axon_collection(k).data)  - min(axon_collection(k).data ));
     if (currentSize > maxSize)
-        maxSize = max(currentSize);
+        maxSize = currentSize;
     end
 end
 

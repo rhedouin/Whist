@@ -56,13 +56,13 @@ if number_dims == 2
     
     FVF = (AVF + MVF) / sum(mask, 'all');
     g_ratio = sqrt(AVF / (AVF + MVF));
+    
     if plot_model
-        imagesc(ZoomedModel);
-        hold on
         
         plotRectangle = 1;
         if plotRectangle
-%             rectangle('Position',[mask_min_x, mask_min_y, mask_max_x - mask_min_x, mask_max_y - mask_min_y],'EdgeColor', 'r', 'LineWidth', 3);
+            imagesc(Model)
+            rectangle('Position',[mask_min_x, mask_min_y, mask_max_x - mask_min_x, mask_max_y - mask_min_y],'EdgeColor', 'r', 'LineWidth', 3);
             title(['FVF = ' num2str(round(1000*FVF)/1000) ', g-ratio = ' num2str(round(1000*g_ratio)/1000)]);
             axis off;
             set(gca, 'FontSize', 20)

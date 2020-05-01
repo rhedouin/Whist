@@ -4,7 +4,7 @@ function [hist, edges] = createHistogramFieldPerturbation(Model, Field, options)
         options.null = 1;
     end
 
-    if ~isfield(options, 'keep_figure')
+    if ~isfield(options, 'keep_figure') || options.keep_figure == 0
         h = figure('Name', 'Frequency histogram');
     else 
         hold on
@@ -54,8 +54,7 @@ function [hist, edges] = createHistogramFieldPerturbation(Model, Field, options)
     
     [hist.extra_axonal, edges] = histcounts(listField(Model == 0),edges);
     hist.extra_axonal = hist.extra_axonal/nb_pixels;
-    
-       
+           
     if plot_hist
         plot(edges(1:end-1),hist.intra_axonal , [line_style 'r'], ...
             'LineWidth',LineWidth)

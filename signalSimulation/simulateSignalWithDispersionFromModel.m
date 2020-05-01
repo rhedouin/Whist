@@ -38,7 +38,7 @@ number_dims = length(model_parameters.dims);
 
 [orientations, dispersion] = generateVMFsample_for_dispersion(model_parameters.field_direction, model_parameters.kappa, model_parameters.dispersion, model_parameters.nb_orientation_for_dispersion);
 
-for k = 1:length(orientations)
+for k = 1:size(orientations,1)
     model_parameters.field_direction = orientations(k,:);
     field_complex(:,:,k) = createFieldFrom2DTensorX(tensor_X, model_parameters);
 end

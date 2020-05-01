@@ -3,7 +3,9 @@ close all
 
 base_model = '/project/3015069.04/data/2DRM/';
 cd(base_model)
-load('distance_2D_vs_3D.mat')
+load('distance_l2_2D_vs_3D_disp02.mat')
+
+d = sqrt(d);
 
 mean_d = squeeze(mean(d,  3));
 min_d = squeeze(min(d,[],  3));

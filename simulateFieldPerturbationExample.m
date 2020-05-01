@@ -13,10 +13,10 @@ addpath(genpath(your_folder))
 
 %%%%%%%%%%%% Load a WM model with a single 2D axon
 % model_path = '/project/3015069.04/code/Whist/WMmodel/MyWMmodel.mat';
-model_path = '/project/3015069.04/code/Whist/data/model_cyl.mat';
+% model_path = '/project/3015069.04/code/Whist/data/model_cyl.mat';
 
 %%%%%%%%%%%% Load a WM model with a single 3D axon
-% model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
+model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
 
 load(model_path)
 axon_collection = oneAxon;
