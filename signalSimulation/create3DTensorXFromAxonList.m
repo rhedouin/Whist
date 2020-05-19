@@ -1,30 +1,30 @@
-function [tensor_X, total_model,M_old] = create3DTensorXFromAxonList(axonlist, model_params)
+function [tensor_X, total_model, axonlist] = create3DTensorXFromAxonList(axonlist, model_params)
 
-total_X = zeros(model_params.dims(1),model_params.dims(2),3,3,'single');
+total_X = zeros(model_params.dims(1),model_params.dims(2),model_params.dims(3),3,3,'single');
 
 myelin_Xi = [model_params.myelin.xi 0 0; 0 model_params.myelin.xi 0; 0 0 model_params.myelin.xi];
 myelin_Xa = [model_params.myelin.xa 0 0; 0 -model_params.myelin.xa/2 0; 0 0 -model_params.myelin.xa/2];
 
-if isfield(model_params.intra_axonal, 'xi')
+if isfield(model_params, 'intra_axonal') && isfield(model_params.intra_axonal, 'xi')
     intra_axonal_Xi = [model_params.intra_axonal.xi 0 0; 0 model_params.intra_axonal.xi 0; 0 0 model_params.intra_axonal.xi];
 end
 
-if isfield(model_params.extra_axonal, 'xi')
+if isfield(model_params, 'extra_axonal') && isfield(model_params.extra_axonal, 'xi')
     extra_axonal_Xi = [model_params.extra_axonal.xi 0 0; 0 model_params.extra_axonal.xi 0; 0 0 model_params.extra_axonal.xi];
     total_X = permute(repmat(extra_axonal_Xi, [1 1 model_params.dims]), [3 4 5 1 2]);
 end
 
 % Preallocation
 total_model = zeros(model_params.dims,'single');
-
-phimap_3D = zeros(model_params.dims,'single');
-thetamap_3D = zeros(model_params.dims,'single');
+ 
+% phimap_3D = zeros(model_params.dims,'single');
+% thetamap_3D = zeros(model_params.dims,'single');
 
 grad_threshold = 0.0001;
 
 for j = 1:length(axonlist) 
+    j
     %% From Wharton 12
-   
     map = zeros(model_params.dims,'single');
     sub_myelin = single(axonlist(j).data);
     sub_intra_axonal = single(axonlist(j).intraAxon);
@@ -56,7 +56,9 @@ for j = 1:length(axonlist)
     small_map(new_ind_myelin) = 1;  
 
     M_old = regionprops3_1(small_map,'MajorAxis');
-
+    
+    axonlist(j).majorAxis = M_old.MajorAxis;
+    
     small_map(new_ind_intra_axonal) = 2;
 
     clear new_sub_intra_axonal
@@ -100,11 +102,11 @@ for j = 1:length(axonlist)
         % Computation of total magnetic susceptibility X
         total_X(sub_myelin(k,1),sub_myelin(k,2),sub_myelin(k,3),:,:) = myelin_Xi + R*myelin_Xa*inv(R);
         
-        phimap_3D(sub_myelin(k,1),sub_myelin(k,2),sub_myelin(k,3)) = angle( exp(1i*phi_rot) );
-        thetamap_3D(sub_myelin(k,1),sub_myelin(k,2),sub_myelin(k,3)) = angle( exp(1i*theta_rot) );     
+%         phimap_3D(sub_myelin(k,1),sub_myelin(k,2),sub_myelin(k,3)) = angle( exp(1i*phi_rot) );
+%         thetamap_3D(sub_myelin(k,1),sub_myelin(k,2),sub_myelin(k,3)) = angle( exp(1i*theta_rot) );     
     end
     
-    if isfield(model_params.intra_axonal, 'xi')
+    if isfield(model_params, 'intra_axonal') && isfield(model_params.intra_axonal, 'xi')
         for k = 1:size(sub_intra_axonal,1)
             total_X(sub_intra_axonal(k,1),sub_intra_axonal(k,2),sub_intra_axonal(k,3), :,:) = intra_axonal_Xi;
         end
@@ -113,7 +115,7 @@ clear phi_rot theta_rot R Rz Ry theta phi new_ind_myelin ind_myelin sub_iA sub_m
 
 end
 % keyboard;
-clear map ind_iA axonlist new_ind_iA
+clear map ind_iA new_ind_iA
 
 % Creates values in model .5 & 1
 total_model = min(total_model, 2);

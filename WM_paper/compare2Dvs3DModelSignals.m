@@ -49,17 +49,23 @@ model_parameters.myelin.weight = 1.5;
 
 model_parameters.nb_orientation_for_dispersion = 100;
 
-model_parameters.kappa_list = [10000 18 9 5.5 3.5 2 1];
-model_parameters.dispersion_list = [0.001 0.1 0.2 0.3 0.4 0.5 0.6];
+% model_parameters.kappa_list = [10000 18 9 5.5 3.5 2 1];
+% model_parameters.dispersion_list = [0.001 0.1 0.2 0.3 0.4 0.5 0.6];
 
 model_parameters.kappa_list = [10000 9 3.5 1];
 model_parameters.dispersion_list = [0.001 0.2 0.4 0.6];
 
-% For one theta
-% theta_list = [0, 15, 30, 45, 60, 75, 90];
-theta_list = [0];
+% model_parameters.kappa_list = [10000 5.5 1];
+% model_parameters.dispersion_list = [0.001 0.3 0.6];
+% 
+% model_parameters.kappa_list = [1];
+% model_parameters.dispersion_list = [0.6];
 
-nb_models = 1;
+% For one theta
+theta_list = [0, 15, 30, 45, 60, 75, 90];
+% theta_list = [45];
+
+nb_models = 10;
 
 for k = 1:length(theta_list)
     theta_degree = theta_list(k);
@@ -84,11 +90,23 @@ for k = 1:length(theta_list)
         
     load([threeD_folder 'B_' num2str(theta_degree) '_adj_' ext '.mat'])
         
-    figure(k)
-    options.keep_figure = 1;
+%     figure(k)
+    options.keep_figure = 0;
     options.edges = (-15:0.2:15);
     options.mask = Mask_3D_v2;
     hist_3D{k} = createHistogramFieldPerturbation(Model_3D, B_adj, options);
+    
+    model_parameters.mask = Mask_3D_v2;
+    
+    signal_3D{k} =  simulateSignalFromField(Model_3D, B_adj, model_parameters);
+
+%     figure(k + 10)
+%     subplot(211)
+%     hold on
+%     plot(abs(signal_3D.total_normalized), '-')
+%     subplot(212)
+%     hold on
+%     plot(phase(signal_3D.total_normalized), '-')
     
     clear options Model_3D Mask_3D B_adj
     
@@ -113,28 +131,65 @@ for k = 1:length(theta_list)
             model_2D_replicate = repmat(model_2D, [1 1 model_parameters.nb_orientation_for_dispersion]);
             mask_2D_replicate = repmat(mask_2D, [1 1 model_parameters.nb_orientation_for_dispersion]);
             
-            %%%%%%%%%% Simulate the field perturbation from the WM model and the multi GRE signals
-            [~, field_2D_dispersion] = simulateSignalWithDispersionFromModel(axon_collection, model_parameters);
-
-%             [~, field_2D] = simulateSignalFromModel(axon_collection, model_parameters);
-                        
-            options.mask = mask_2D_replicate;          
+            %%%%%%%%% Simulate the field perturbation from the WM model and the multi GRE signals
+            [signal_2D{k,l,m}, field_2D_dispersion] = simulateSignalWithDispersionFromModel(axon_collection, model_parameters);
+            
+%             if l == 1
+%                 figure(k + 10)
+%                 subplot(211)
+%                 plot(abs(signal_2D{k,l,m}.total_normalized), '--')
+%                 subplot(212)
+%                 plot(phase(signal_2D{k,l,m}.total_normalized), '--')
+%             elseif l == 2
+%                 figure(k + 10)
+%                 subplot(211)
+%                 plot(abs(signal_2D{k,l,m}.total_normalized), '-.')
+%                 subplot(212)
+%                 plot(phase(signal_2D{k,l,m}.total_normalized), '-.')
+%             elseif l == 3
+%                 figure(k + 10)
+%                 subplot(211)
+%                 plot(abs(signal_2D{k,l,m}.total_normalized), ':.')
+%                 subplot(212)
+%                 plot(phase(signal_2D{k,l,m}.total_normalized), ':.')
+%             elseif l == 4
+%                 figure(k + 10)
+%                 subplot(211)
+%                 plot(abs(signal_2D{k,l,m}.total_normalized), 'r--')
+%                 subplot(212)
+%                 plot(phase(signal_2D{k,l,m}.total_normalized), 'r--')
+%             end
+            
+            options.mask = mask_2D_replicate;
             options.edges = (-15:0.2:15);
             options.keep_figure = 1;
+            
+%             figure(k)
+%             
+%             if l == 1
+%                 options.line_style = '--';
+%             elseif l == 2
+%                 options.line_style = '-.';
+%             elseif l == 3
+%                 options.line_style = ':.';
+%             elseif l == 4
+%                 options.line_style = '--';
+%             end
+            
             hist_2D{k,l,m} = createHistogramFieldPerturbation(model_2D_replicate, field_2D_dispersion, options);
 
-            d(k,l,m) = sum((hist_2D{k,l,m}.intra_axonal - hist_3D{k}.intra_axonal).^2 + ...
+            diff_histo(k,l,m) = sqrt(sum((hist_2D{k,l,m}.intra_axonal - hist_3D{k}.intra_axonal).^2 + ...
                            (hist_2D{k,l,m}.extra_axonal - hist_3D{k}.extra_axonal).^2 + ...
-                           (hist_2D{k,l,m}.myelin - hist_3D{k}.myelin).^2)
+                           (hist_2D{k,l,m}.myelin - hist_3D{k}.myelin).^2));
+                        
+            simi_signal(k,l,m) = computeSignalSimilarityIndex(signal_2D{k,l,m}.total_normalized, signal_3D.total_normalized)
         end
     end
     clear model_2D mask_2D options
 end
 
-return;
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%% save([twoD_folder 'distance_l2_2D_vs_3D_' ext '_new_mask_100_models.mat'], 'd')
+%%%%%%%%%%%%%%%%%%%%%%%
+save([twoD_folder 'signal_and_histo_distance_2D_vs_3D_' ext '_new_mask_100_models.mat'], 'diff_histo', 'simi_signal', 'signal_2D', 'signal_3D')
 
 
 

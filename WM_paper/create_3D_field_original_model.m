@@ -6,10 +6,11 @@ cd(base_folder)
 theta_list = [0, 15, 30, 45, 60, 75, 90];
 % theta_list = [15, 30, 45, 60, 75, 90];
 
-load([base_folder 'tensor_X_3D_disp004.mat'])
+% load([base_folder 'tensor_X_3D_disp004.mat'])
 load([base_folder 'Model_3D_disp004.mat'])
 % keyboard;
 load([base_folder 'Mask_3D_disp004.mat'])
+load([base_folder 'Mask_3D_disp004_v2.mat'])
 
 for k = 1:length(theta_list)
     theta_degree = theta_list(k);
@@ -17,25 +18,17 @@ for k = 1:length(theta_list)
 
     theta = deg2rad(theta_degree);
     phi = 0;
-    model_parameters.field_direction = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)];
-    model_parameters.B0 = 3;
-    tic()
-    B_adj = createFieldFrom3DTensorX(tensor_X_3D, model_parameters);
+    load(['B_' num2str(theta_degree) '_adj_disp004.mat'])
   
-    B_adj = real(B_adj);    
-    B_adj = single(B_adj.*Mask_3D);
-    toc()
-    tic()
-  
-    figure(1)
+    figure(k)
     options.keep_figure = 1;
     options.edges = (-15:0.2:15);
     options.mask = Mask_3D;
     hist_3D{k} = createHistogramFieldPerturbation(Model_3D, B_adj, options);
   
-    figure
-    imagesc(B_adj(:,:,400))
-    keyboard;
+    options.mask = Mask_3D_v2;
+    hist_3D{k} = createHistogramFieldPerturbation(Model_3D, B_adj, options);
+  
 %     save(['B_' num2str(theta_degree) '_adj_disp004'], 'B_adj')
     toc()
     clear B_adj

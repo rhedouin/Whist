@@ -6,7 +6,7 @@ if nargin == 3
 elseif nargin == 2 
     createFig = varargin{1};
     color = 's';
-elseif nargin == 1;
+elseif nargin == 1
     createFig = 1;
     color = 's';
 end

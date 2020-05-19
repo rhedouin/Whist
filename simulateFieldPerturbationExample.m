@@ -4,8 +4,8 @@
 % (that you can uncomment to run)
 % You can load your own WM model create by createOneWMModelExample.m
  
-% clear
-% close all
+clear
+close all
 
 your_folder = [pwd,'/']; 
 % location of the toolbox
@@ -19,7 +19,7 @@ addpath(genpath(your_folder))
 model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
 
 load(model_path)
-axon_collection = oneAxon;
+% axon_collection = oneAxon;
 
 number_dims = ndims(mask);
 model_parameters.dims = size(mask);
@@ -83,9 +83,9 @@ options.mask = mask;
 createHistogramFieldPerturbation(model, field, options);
 
 if number_dims == 2
-    plot2DFieldAndSignal(field, signal_original.total, model_parameters.field_direction)
+    plot2DFieldAndSignal(field, signal_original.total, model_parameters.TE , model_parameters.field_direction)
 elseif number_dims == 3
-    plot3DFieldAndSignal(field, signal_original.total, model_parameters.field_direction)
+    plot3DFieldAndSignal(field, signal_original.total, model_parameters.TE , model_parameters.field_direction)
 else
     error('dimension of the model should be 2 or 3');
 end
