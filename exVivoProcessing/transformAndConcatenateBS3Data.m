@@ -1,11 +1,10 @@
 % Transform and concatenate BS3 gre dwi data 
+function out = transformAndConcatenateBS3Data(fa)
 
 base_folder = '/project/3015069.01/derived/BS-3/';
 gre_folder = [base_folder 'ses-mri03/gre/lowres/'];
 gre_ref_folder = [gre_folder 'ref_space/'];
 concatenate_folder = [gre_ref_folder 'concatenate_signals/'];
-
-fa_list = [5, 10, 20, 30, 40, 50, 70];
 
 load('/project/3015069.04/data/rotations/BS3_highres_rotations_ref_2_orientations.mat')
 
@@ -16,7 +15,6 @@ nb_orientations = 10;
 
 mask = load_nii_img_only([concatenate_folder 'BS-3_ses-mri03_acq-lowres_gre_gradunwarp_mask_sphere_ref.nii.gz']);
 
-for fa = fa_list    
     concatenate_signals = [];
     for kOri = 1:nb_orientations
         orient_folder = [gre_ref_folder 'orientation-' num2str(kOri) '/'];
@@ -35,7 +33,7 @@ for fa = fa_list
         theta =  TransformV1_2_ThetaWithRotation(V1, rotations(:,:,kOri), mask);
         toc()
      
-        display('transform to cartesian polyfit')
+        display('transform magn and unwrapped phase to cartesian polyfit')
         tic()
         [real_complex_polyfit, imag_complex_polyfit] = TransformMagnPhase_2_PolyfitCartesian(magn, unwrapped_phase, mask);
         toc()
@@ -48,7 +46,7 @@ for fa = fa_list
     magn_nii.hdr.dime.datatype = 16;
     magn_nii.hdr.dime.bitpix = 32;
         
-%     save_untouch_nii(magn_nii, [concatenate_folder 'BS-3_ses-mri03_acq-lowres_all_orientations_fa-' num2str(fa) '_concatenate_signals_2_ref.nii.gz']);
+    save_untouch_nii(magn_nii, [concatenate_folder 'BS-3_ses-mri03_acq-lowres_all_orientations_fa-' num2str(fa) '_concatenate_signals_2_ref.nii.gz']);
     
 end
 

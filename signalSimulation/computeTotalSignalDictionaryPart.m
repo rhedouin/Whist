@@ -1,4 +1,22 @@
-function out = createDictionaryPartSignalMultiModalities(signal_path, output_folder, experience_name, T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF, nb_rotations, replic, dict_options)
+function out = computeTotalSignalDictionaryPart(signal_path, output_folder, experience_name, T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF, nb_rotations, replic, dict_options)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This function take the signal associated with each compartment (see computeCompartmentSignalFromModels):
+% It creates the total signal by adding the T2-weighting, noise and compartment weighting. 
+% This signal is then normalized, different methods are provided (polyfit_cartesian should be used)
+%
+% %%%%%%%%%%%%%% Inputs 
+% signal_path, output_folder, experience_name: path parameters
+% T2MyelinRange, T2IntraExtraAxonalRange, weightRange, nb_TE, noise, FVF,
+% nb_rotations, replic: signals parameters
+% dict_options is a structure to set if fiber orientation is included (boolean) and
+% the signal normalization method (several possible)
+%
+% %%%%%%%%%%%%%% Outputs 
+% The total signal is saved as a part of the dictionary for one particular
+% FVF and replic. 
+% The Final dictionary is the concatenation of these parts.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 load(signal_path); 
 TE = TE(1:nb_TE); 

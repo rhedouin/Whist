@@ -1,6 +1,9 @@
 function signal_components = reconstructSignalComponents(field, model, model_parameters)
 
-% Compute signal components
+%%%%%%%%%% Compute signal components
+% This function create the signal associated with each compartment
+% (intra-axonal, extra-axonal, myelin) exp(i.t.delta(B))
+
 N = length(model_parameters.TE);
 
 if ndims(field) == 3

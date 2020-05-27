@@ -1,4 +1,26 @@
-function out = computeAndSaveSignalFromModels(FVF_round , suffix, model_folder, signal_component_path, dict_params)
+function out = computeCompartmentSignalFromModels(model_folder, signal_component_path, suffix, dict_params)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This function create from a WM model with various parameter (see below):
+% create the corresponding 2D tensor map
+% create the field perturbation map
+% create and save the signal for each compartment (intra-axonal, extra-axonal, myelin)
+%
+% %%%%%%%%%%%%%% Inputs 
+% model_folder folder of a group of models with a fixed FVF and various g-ratio
+% signal_component_path path to save the signals
+% suffix to load the good replica of the model
+%
+%%%%% dict_params is a structure that comports
+% required: xiRange, xaRange, gRatioRange, fiber_directions, FVF_round values, TE
+% optional: rotations (boolean) and sphere_rotations if the signal is computed following a multi orientation approach 
+% optional: dispersion (boolean), nb_orientation_for_dispersion,
+% dispersion_list,kappa_list if the signal include fiber_dispersion
+% %%%%%%%%%%%%%% Outputs 
+% The signal saved is a 6 dimension array of structure (see
+% reconstructSignalComponents for structure details)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 gamma  = 42.6;
 
@@ -10,6 +32,8 @@ lXaMyelin = length(xaMyelinRange);
 
 gRatioRange = dict_params.gRatioRange;
 lGRatio = length(gRatioRange);
+
+FVF_round = dict_params.FVF_round;
 
 fiber_directions = dict_params.fiber_directions;
 nb_fiber_directions = size(fiber_directions, 1);
@@ -69,7 +93,8 @@ for k = 1: lGRatio
     clear Model ZoomedModel axon_collection  
     gRatio = gRatioRange(k);
        
-    model_FVF_path = [model_folder 'FVF' num2str(FVF_round)  '_gRatio' num2str(gRatio) '_N400' suffix '.mat'];
+    model_FVF_folder = [model_folder 'FVF' num2str(FVF_round) '_N400' suffix '/'];
+    model_FVF_path = [model_FVF_folder 'FVF' num2str(FVF_round)  '_gRatio' num2str(gRatio) '_N400' suffix '.mat'];
 
     load(model_FVF_path);
     

@@ -32,25 +32,20 @@ model_params.max_iteration = 5000;
 model_params.packing_speed = 1;
 % 
 %%%%%%%%%%% Axons dispersion
-model_params.expected_FVF = 0.5076;
+model_params.expected_FVF = 0.7
 % model_params.expected_FVF = 0.1;
 
 model_params.dispersion_mode = 'spread'; 
 model_params.tolerance = 0.01;
 
 %%%%%%%%%%% Change g-ratio
-model_params.expected_g_ratio = 0.6693;
+model_params.expected_g_ratio = 0.65;
 
 %%%%%%%%%%% Plot / save
 model_params.plot_model = 0;
 
-for k = 3:10
-    if k > 5
-        model_params.dispersion_mode = 'remove'; 
-    end
-    model_params.save_model = [your_folder 'WMmodel/2DModel_FVF051_gRatio_067_v' num2str(k) '.mat'];
-    [axon_collection, Model, ZoomedModel] = createOne2DWMModel(axon_dictionary_path, model_params);
-end
+model_params.save_model = [your_folder 'WMmodel/2DModel_FVF070_gRatio_065.mat'];
+[axon_collection, Model, ZoomedModel] = createOne2DWMModel(axon_dictionary_path, model_params);
 
 
 

@@ -1,0 +1,40 @@
+This toolbox is used to 
+create WM Models (1)
+simulate the corresponding ME-GRE (2)
+create a dictionary from these signals (3)
+train a deep learning with the dictionary (4)
+
+post-process data (5)
+recover brain parameter maps (6)
+
+
+(1) functions in createWMModel 
+see createOneWMModelExample.m
+Easy to parallelize if a large number of WM models are needed
+
+(2) functions in signalSimulations
+simulate the ME-GRE signal for one WM model
+see simulateFieldPerturbationExample.m 
+
+(3) functions in signalSimulations
+simulate the ME-GRE signal for many WM models and microstructure parameters range
+everything is parallelized
+createDictionaryCompletePipeline.m directly creates the dictionary from the WM models following several steps:
+computeCompartmentSignalFromModels creates the field perturbation and the corresponding ME-GRE signals for different WM models parameters (FVF, g-ratio) for each compartment (intra-axonal, extra-axonal, myelin) 
+computeTotalSignalDictionaryPart creates the total signal adding the T2 weighting, the compartment weights and normalize the signal
+concatenateDictionaryParts concatenates the previous results into an entire dictionary
+
+(4) function in deep_learning
+Keras_train_WMModel_BS3_all_orientations_with_regularization_new_scaling.py within deep_learning
+To be used on a GPU, just need to fill the dictionary details
+
+(5) functions in exVivoProcessing
+see transformAndConcatenateBS3DataMain.m (parallalized along flip angles)
+Processed the data from acquisition, take the magn and unwrapped phase all registered in the same space (same rotations should be used than with the dictionary) and transform it into a ME-GRE signal normalized concatenate along all orientations and include the theta fiber orientation.
+
+(6) function in deep_learning
+recover_parameter_BS3_all_orientations_polyfit_cartesian_new_scaling.py
+To be used on GPU, create brain parameter maps from the trained deep learning (4) and the concatenate signals (5)
+
+
+
