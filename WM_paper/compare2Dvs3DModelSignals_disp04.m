@@ -63,11 +63,11 @@ model_parameters.dispersion_list = [0.001 0.2 0.4 0.6];
 
 % For one theta
 theta_list = [0, 15, 30, 45, 60, 75, 90];
-theta_list = [0];
+% theta_list = [0];
 
 % theta_list = [45];
 
-nb_models = 1;
+nb_models = 10;
 
 for k = 1:length(theta_list)
     theta_degree = theta_list(k);
@@ -80,25 +80,25 @@ for k = 1:length(theta_list)
     %%%%%%% Compute 3D model histogram
     display('3D model: load and create histogram')
     
-%     load([threeD_folder 'Mask_3D_' ext '.mat'])
-%     load([threeD_folder 'Model_3D_' ext '.mat'])
-    load([threeD_folder 'Mask_3D_disp004_v2.mat'])  
+    load([threeD_folder 'Mask_3D_' ext '.mat'])
+    load([threeD_folder 'Model_3D_' ext '.mat'])
+        Mask_3D = single(Mask_3D);
         
-    AVF = length(find(Model_3D.*Mask_3D_v2 == 0.5));
-    MVF = length(find(Model_3D.*Mask_3D_v2 == 1));
+    AVF = length(find(Model_3D.*Mask_3D == 0.5));
+    MVF = length(find(Model_3D.*Mask_3D == 1));
     
-    FVF = (AVF + MVF) / sum(Mask_3D_v2, 'all');
+    FVF = (AVF + MVF) / sum(Mask_3D, 'all');
     g_ratio = sqrt(AVF / (AVF + MVF));
-        
+            
     load([threeD_folder 'B_' num2str(theta_degree) '_adj_' ext '.mat'])
         
 %     figure(k)
     options.keep_figure = 0;
     options.edges = (-15:0.2:15);
-    options.mask = Mask_3D_v2;
+    options.mask = Mask_3D;
     hist_3D{k} = createHistogramFieldPerturbation(Model_3D, B_adj, options);
     
-    model_parameters.mask = Mask_3D_v2;
+    model_parameters.mask = Mask_3D;
     
     signal_3D{k} =  simulateSignalFromField(Model_3D, B_adj, model_parameters);
 
@@ -122,7 +122,7 @@ for k = 1:length(theta_list)
         
         %For one model
         for m = 1:nb_models
-            load([twoD_folder '2DModel_FVF051_gRatio_067_v' num2str(m) '.mat'])
+            load([twoD_folder '2DModel_FVF054_gRatio_067_v' num2str(m) '.mat'])
             model_2D = model;
             mask_2D = mask;
             clear model mask
@@ -191,7 +191,7 @@ for k = 1:length(theta_list)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%
-save([twoD_folder 'signal_and_histo_distance_2D_vs_3D_' ext '_new_mask_100_models_paper_parameter_values.mat'], 'diff_histo', 'simi_signal', 'signal_2D', 'signal_3D')
+save([twoD_folder 'signal_and_histo_distance_2D_vs_3D_' ext '_new_mask_100_models_paper_parameter_values_disp04.mat'], 'diff_histo', 'simi_signal', 'signal_2D', 'signal_3D')
 
 
 

@@ -34,13 +34,13 @@ end
 ylim([0 0.07])
 
 % title('l1 histogramm error between 3D and 2D models')
-ylabel('RMSE(S_{2D}, S_{3D})')
+ylabel('similarity(S_{2D}, S_{3D})')
 xlabel('\theta')
 
 leg = legend('0', '0.2', '0.4', '0.6');
 leg.NumColumns = 2;
 
-title(leg, '2D model dispersion')
+title(leg, 'dispersion')
 set(gca, 'FontSize', 14, 'FontWeight','bold' )
 
 

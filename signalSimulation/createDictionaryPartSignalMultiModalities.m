@@ -40,6 +40,7 @@ directionsValues = zeros(3,lgRatio, lXiMyelin, lXaMyelin, lDir, lT2Myelin, lT2In
 thetaValues = zeros(lgRatio, lXiMyelin, lXaMyelin, lDir, lT2Myelin, lT2IntraExtraAxonal, lWeight, 'single');
 
 tic()
+
 for l = 1:lgRatio
     gRatio = gRatioRange(l)
     for m = 1:lXiMyelin
@@ -167,7 +168,7 @@ for kCoordinate = 1:lCoordinate
     coordinate = coordinate_list{kCoordinate};
 
     base_name = [prefix_name '_FVF' num2str(FVF) '_replic' num2str(replic) '_' num2str(nb_rotations) ...
-                 'rotations_' num2str(nb_TE)  'TE_' experience_name '_fix_xa_' coordinate '_'  suffix_theta];
+                 'rotations_' num2str(nb_TE)  'TE_' experience_name '_' coordinate '_'  suffix_theta];
     signal_name = [base_name '.h5py'];
 
     SignalValues = single(SignalValuesMultiCoordinates.(coordinate));

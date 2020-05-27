@@ -6,11 +6,11 @@ total_X = zeros(model_parameters.dims(1),model_parameters.dims(2),3,3);
 myelin_Xi = [model_parameters.myelin.xi 0 0; 0 model_parameters.myelin.xi 0; 0 0 model_parameters.myelin.xi];
 myelin_Xa = [model_parameters.myelin.xa 0 0; 0 -model_parameters.myelin.xa/2 0; 0 0 -model_parameters.myelin.xa/2];
 
-if isfield(model_parameters.intra_axonal, 'xi')
+if (isfield(model_parameters, 'intra_axonal') && isfield(model_parameters.intra_axonal, 'xi')) 
     intra_axonal_Xi = [model_parameters.intra_axonal.xi 0 0; 0 model_parameters.intra_axonal.xi 0; 0 0 model_parameters.intra_axonal.xi];
 end
 
-if isfield(model_parameters.extra_axonal, 'xi')
+if (isfield(model_parameters, 'extra_axonal') && isfield(model_parameters.extra_axonal, 'xi')) 
     extra_axonal_Xi = [model_parameters.extra_axonal.xi 0 0; 0 model_parameters.extra_axonal.xi 0; 0 0 model_parameters.extra_axonal.xi];
     total_X = permute(repmat(extra_axonal_Xi, [1 1 model_parameters.dims]), [3 4 1 2]);
 end
@@ -77,7 +77,7 @@ for j = 1:length(axonlist)
         end
     end
     
-    if isfield(model_parameters.intra_axonal, 'xi')
+    if (isfield(model_parameters, 'intra_axonal') && isfield(model_parameters.intra_axonal, 'xi'))
         for k = 1:size(sub_intra_axonal,1)
             total_X(sub_intra_axonal(k,1),sub_intra_axonal(k,2),:,:) = intra_axonal_Xi;
         end
@@ -94,7 +94,7 @@ tensor_X(:,:,4) = total_X(:,:,2,2);
 tensor_X(:,:,5) = total_X(:,:,2,3);
 tensor_X(:,:,6) = total_X(:,:,3,3);
 
-if  ~(isfield(model_parameters, 'no_mask_tensor_map') && model_parameters.no_mask_tensor_map == 1)
+if  isfield(model_parameters, 'no_mask_tensor_map') && model_parameters.no_mask_tensor_map == 1
     mask_replic = repmat(model_parameters.mask,[1 1 6]);
     tensor_X(~mask_replic) = 0;
 end

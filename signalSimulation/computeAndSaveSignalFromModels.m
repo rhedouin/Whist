@@ -1,12 +1,6 @@
-function out = computeAndSaveSignalFromModels(FVF_round , suffix, dico_inputfolder, dico_outputfolder, dict_params)
-
-mkdir(dico_outputfolder);
+function out = computeAndSaveSignalFromModels(FVF_round , suffix, model_folder, signal_component_path, dict_params)
 
 gamma  = 42.6;
-
-FVF_inputfolder = [dico_inputfolder 'FVF' num2str(FVF_round) '_N400' suffix '/'];
-FVF_outputfolder = [dico_outputfolder 'FVF' num2str(FVF_round) '_N400' suffix '/'];
-mkdir(FVF_outputfolder)
 
 xiMyelinRange = dict_params.myelin.xiRange;
 lXiMyelin = length(xiMyelinRange);
@@ -74,9 +68,10 @@ for k = 1: lGRatio
     k
     clear Model ZoomedModel axon_collection  
     gRatio = gRatioRange(k);
+       
+    model_FVF_path = [model_folder 'FVF' num2str(FVF_round)  '_gRatio' num2str(gRatio) '_N400' suffix '.mat'];
 
-    axonFileName = [FVF_inputfolder 'FVF' num2str(FVF_round)  '_gRatio' num2str(gRatio) '_N400' suffix '.mat']
-    load(axonFileName);
+    load(model_FVF_path);
     
     model_parameters.FVF = FVF;
     model_parameters.g_ratio = g_ratio;
@@ -214,7 +209,7 @@ end
 thetaValues = acos(abs(directionValues(3, :, :, :, :, :, :)));
 info = 'In order, gRatio, xi, xa, fiber directions, rotation, dispersion';
 
-save([FVF_outputfolder 'Signal_FVF' num2str(FVF_round) suffix '.mat'], 'signal_components', 'gRatioRange','gRatioValues', 'xiMyelinRange',  'xiMyelinValues', 'xaMyelinRange',  'xaMyelinValues', 'directionValues', 'thetaValues', 'dispersionValues', 'TE', 'info', 'sphere_rotations', 'fiber_directions', 'dims', 'dict_params');
+save(signal_component_path, 'signal_components', 'gRatioRange','gRatioValues', 'xiMyelinRange',  'xiMyelinValues', 'xaMyelinRange',  'xaMyelinValues', 'directionValues', 'thetaValues', 'dispersionValues', 'TE', 'info', 'sphere_rotations', 'fiber_directions', 'dims', 'dict_params');
 
 out = 0
 end

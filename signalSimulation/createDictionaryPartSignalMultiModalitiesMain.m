@@ -6,8 +6,8 @@ req_etime = 1000;
 
 base_folder = '/project/3015069.04/';
 job_folder = [base_folder 'temp/Jobs'];
-signal_folder = [base_folder 'signal_components/single_orientation/BrainSample2/'];
-dico_folder = [base_folder 'dictionaries/single_orientation/BrainSample2/'];
+signal_folder = [base_folder 'signal_components/multi_orientations/test/'];
+dico_folder = [base_folder 'dictionaries/multi_orientations/test/'];
 
 cd(job_folder)
 
