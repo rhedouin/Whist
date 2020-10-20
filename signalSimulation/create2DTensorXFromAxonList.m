@@ -73,7 +73,7 @@ for j = 1:length(axonlist)
         total_X(sub_myelin(k,1),sub_myelin(k,2),:,:) = myelin_Xi + R*myelin_Xa*inv(R);
         
         if compute_phimap
-            phimap(sub_myelin(k,1),sub_myelin(k,2)) = angle( exp(1i*phi) );
+            phimap(sub_myelin(k,1),sub_myelin(k,2)) = angle(exp(1i*phi));
         end
     end
     

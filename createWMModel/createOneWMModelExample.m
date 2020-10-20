@@ -32,7 +32,7 @@ model_params.max_iteration = 5000;
 model_params.packing_speed = 1;
 % 
 %%%%%%%%%%% Axons dispersion
-model_params.expected_FVF = 0.7
+model_params.expected_FVF = 0.7;
 % model_params.expected_FVF = 0.1;
 
 model_params.dispersion_mode = 'spread'; 

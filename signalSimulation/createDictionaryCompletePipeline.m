@@ -5,25 +5,28 @@ cd /project/3015069.04/temp/Jobs
 project_folder = '/project/3015069.04/';
 
 model_folder = [project_folder 'WM_Models/N400/'];
-signal_component_folder = [project_folder 'signal_components/multi_orientations/test/'];
-dict_folder = [project_folder  'dictionaries/multi_orientations/test/'];
+
+experience_name = 'BrainSample2NewRange';
+
+signal_component_folder = [project_folder 'signal_components/multi_orientations/' experience_name '/'];
+dict_folder = [project_folder  'dictionaries/multi_orientations/' experience_name '/'];
 
 mkdir(signal_component_folder)
 
 rotation_folder = '/project/3015069.04/data/rotations/';
-req_mem1   = 2e9;
-req_mem2   = 5e9;
+req_mem1   = 5e9;
+req_mem2   = 60e9;
 
-req_etime1 = 500;
-req_etime2 = 1000;
+req_etime1 = 5000;
+req_etime2 = 5000;
 
 %%%%%%%%%%%% Need to be set one particular set of rotations, the 20 fiber
 %%%%%%%%%%%% orientations are evenly spread on the sphere
-load([rotation_folder 'BS3_highres_rotations_ref_2_orientations.mat']);
+load([rotation_folder 'BrainSample2_rotations_ref_2_orientations.mat']);
 load([rotation_folder '20_fiber_orientations_rotations.mat']);
 
 %%%%%%%%%%%% Signal component parameters
-dict_params.TE = linspace(2.12,54.31,18)*1e-3;
+dict_params.TE = linspace(1.7,35.25,12)*1e-3;
 nb_TE = length(dict_params.TE);
 
 dict_params.B0 = 3;
@@ -32,12 +35,10 @@ dict_params.myelin.xiRange = -0.2:0.1:0.2;
 dict_params.myelin.xaRange = -0.1;
 
 dict_params.gRatioRange = 50:5:85;
-dict_params.gRatioRange = 50;
-dict_params.myelin.xiRange = -0.2;
 
 dict_params.fiber_directions = fiber_directions;
 
-dict_params.rotations = 0;
+dict_params.rotations = 1;
 if dict_params.rotations == 0
     nb_rotations = 1;
 else
@@ -55,15 +56,12 @@ dict_params.dispersion_list = [0 0.1 0.2 0.3 0.4];
 FVFRange = (10 : 10 : 80);
 
 T2MyelinRange = [4 8 12 16 20]*1e-3;
-T2IntraExtraAxonalRange = (20 : 20 : 100)* 1e-3;
-T2ExtraAxonalRange = (20 : 20 : 100)* 1e-3;
+T2IntraExtraAxonalRange = (15 : 10 : 95)* 1e-3;
+T2ExtraAxonalRange = (15 : 10 : 95)* 1e-3;
 
 weightRange = [0.5 1 1.5 2 2.5 3];
 
-noise = 0.01;
-nb_replic = 1;
-
-experience_name = 'BS-3';
+noise = 0.04;
 
 options.include_theta = 1;
 
@@ -76,7 +74,7 @@ options.coordinate.classic_polar = 0;
 dict_suffix = '_polyfit_cartesian_with_theta';
 
 it = 0;
-nb_replica = 1;
+nb_replica = 8;
 jobIdAll = {};
 
 for k = 1:nb_replica
