@@ -64,6 +64,9 @@ signal.myelin_water = model_parameters.myelin_water.weight * exp(-model_paramete
 signal.total = signal.intra_axonal + signal.extra_axonal + signal.myelin_phospholipid + signal.myelin_water;
 signal.total_normalized = signal.total  / abs(signal.total(1));
 
+signal.magn = abs(signal.total_normalized);
+signal.phase = phase(signal.total_normalized);
+
 end
 
 

@@ -18,11 +18,6 @@ max_d = squeeze(max(d,[],  3));
 pos = max_d - mean_d;
 neg = min_d - mean_d;
 
-st = 4;
-mean_d2 = mean_d(st:end, :);
-pos2 = pos(st:end, :);
-neg2 = neg(st:end, :);
-
 x = (0:15:90);
 x2 = x(st:end);
 

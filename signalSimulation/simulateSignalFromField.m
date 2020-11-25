@@ -60,6 +60,9 @@ signal.extra_axonal = model_parameters.extra_axonal.weight * exp(-model_paramete
 signal.total = signal.intra_axonal + signal.myelin + signal.extra_axonal;
 signal.total_normalized = signal.total  / abs(signal.total(1));
 
+signal.magn = abs(signal.total_normalized);
+signal.phase = phase(signal.total_normalized);
+
 end
 
 

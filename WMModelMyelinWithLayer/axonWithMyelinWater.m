@@ -13,12 +13,6 @@ intra_axonal_radius = gRatio * original_myelinated_axon_radius;
 myelin_thickness = (1 - gRatio) * original_myelinated_axon_radius;
 
 myelin_phospholipid_proportion = 1 - myelin_water_proportion;
-% 
-% if nb_myelin_water_layer == 0
-%     adujsted_myelin_thickness = original_myelin_thickness;
-% else
-%     adujsted_myelin_thickness = original_myelin_thickness / sqrt(myelin_water_proportion);
-% end
 
 if nb_myelin_water_layer ~= 0
     unit_myelin_phospholipid_layer_thickness = myelin_phospholipid_proportion * myelin_thickness / (nb_myelin_water_layer+1);

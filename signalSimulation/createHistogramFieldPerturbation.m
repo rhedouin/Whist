@@ -1,12 +1,11 @@
-function [hist, edges] = createHistogramFieldPerturbation(Model, Field, options)
+function [hist, edges, meanShift, posShift, negShift] = createHistogramFieldPerturbation(Model, Field, options)
    
     if ~exist('options', 'var')
         options.null = 1;
     end
 
-    if ~isfield(options, 'keep_figure') || options.keep_figure == 0
+    if options.plot ~= 0
         h = figure('Name', 'Frequency histogram');
-    else 
         hold on
     end
     
@@ -40,7 +39,6 @@ function [hist, edges] = createHistogramFieldPerturbation(Model, Field, options)
     else
         mask = ones(size(Model));
     end
-    hold on
     
     listField = Field(:);
     
@@ -64,11 +62,12 @@ function [hist, edges] = createHistogramFieldPerturbation(Model, Field, options)
         
         plot(edges(1:end-1), hist.extra_axonal, [line_style 'g'], ...
             'LineWidth',LineWidth)
+        
+        leg = legend('intra axonal', 'myelin', 'extra axonal');
+        xlabel('Hz')
+        title('Frequency histogram')
     end
     
-    leg = legend('intra axonal', 'myelin', 'extra axonal');
-    xlabel('Hz')
-    title('Frequency histogram')
     
     if isfield(options, 'xlim')
         xlim(options.xlim);
@@ -79,5 +78,12 @@ function [hist, edges] = createHistogramFieldPerturbation(Model, Field, options)
     if isfield(options, 'fontWeight')
         set(gca, 'FontWeight', options.fontWeight);
     end
+    
+    meanShift = mean(listField(Model == 1));
+    maxShift = max(listField(Model == 1));
+    minShift = min(listField(Model == 1));
+    
+    posShift = maxShift - meanShift;
+    negShift = minShift - meanShift;
 
 end
