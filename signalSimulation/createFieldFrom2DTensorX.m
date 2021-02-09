@@ -1,7 +1,9 @@
 function TotalField = createFieldFrom2DTensorX(tensor_X, model_parameters)
 % Create field perturbation from 2D susceptibility tensor (see Tianyou Xu 2018)
+% Input in ppm
+% Total field in Hz
 
-gamma = 42.6;
+gamma = 42.6; % MHz
 
 dims = size(tensor_X);
 [kx,ky] = ndgrid(-dims(1)/2:dims(1)/2-1, -dims(2)/2:dims(2)/2-1);

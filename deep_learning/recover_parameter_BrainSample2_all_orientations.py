@@ -28,7 +28,7 @@ data_project_folder = '/project/3015069.01/'
 print(data_project_folder)
 exp_name = 'BrainSample2LorentzinaCorrection'
 
-list_fa = ['fa-5', 'fa-10', 'fa-15','fa-20', 'fa-35', 'fa-60']
+list_fa = ['fa-05', 'fa-10', 'fa-15','fa-20', 'fa-35', 'fa-60']
 nbFa =  len(list_fa)
 
 noise = '4'
@@ -38,22 +38,22 @@ for kFa in range(0, nbFa):
 
 	base_signal_name = 'BrainSample-2_ses-03'
 	base_signal_folder = os.path.join(data_project_folder, 'derived/BrainSample-2/ses-03/gre_renaud/concatenate_signals_9_orientations/')
-	mask_signal_folder = os.path.join(data_project_folder, 'derived/BrainSample-2/ses-03/gre_renaud/masks/')
+	mask_folder = os.path.join(data_project_folder, 'derived/BrainSample-2/ses-03/gre_renaud/masks/')
 	print(base_signal_folder)
 
 	dp_project_folder = '/project/3015069.04/'
 	base_dp_folder = os.path.join(dp_project_folder, 'deep_learning/multi_orientations/BrainSample2LorentzinaCorrection/')
 	print(base_dp_folder)
 
-	dict_base_name = 'SignalWithNoise' + noise + '_8rep_' + str(nb_orientations) + 'rotations_' + str(nb_TE) + '_TE_' + exp_name + '_polyfit_cartesian_with_theta'
+	dict_base_name = 'SignalWithNoise' + noise + '_8rep_' + str(nb_orientations) + 'rotations_' + str(nb_TE) + 'TE_' + exp_name + '_polyfit_cartesian_with_theta'
 	dp_folder = os.path.join(base_dp_folder, dict_base_name + '/')
 	model_path = os.path.join(dp_folder, 'epoch_40.h5py')
 
 	input_scale_name = dict_base_name + '_input_scale.npy'
 	input_scale_path = os.path.join(dp_folder, input_scale_name)
 
-	input_signal_nii_path = os.path.join(base_signal_folder, base_signal_name + '_all_orientations_' + fa  +'_concatenate_signals_polyfit_cartesian_with_theta_2_ref.nii.gz')
-	input_mask_nii_path = os.path.join(base_signal_folder, 'BrainSample-2_ses-03_gre_orientation-4_brain_mask.nii.gz')
+	input_signal_nii_path = os.path.join(base_signal_folder, base_signal_name + '_all_orientations_' + fa  +'_concatenate_signal_polyfit_cartesian_with_theta_2_ref.nii.gz')
+	input_mask_nii_path = os.path.join(mask_folder, 'BrainSample-2_ses-03_gre_orientation-4_brain_mask.nii.gz')
 
 	# Prepare Output name
 	output_scale_min_path = os.path.join(dp_folder,dict_base_name + '_output_scale_min.npy')

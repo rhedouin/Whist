@@ -52,8 +52,8 @@ itl = 0;
 for l = [0.2 0.3 0.4 0.5]
       classic_model_parameters.myelin.weight = l;
       myelin_water_proportion = classic_model_parameters.myelin.weight;
-      new_model_parameters.myelin_phospholipid.xi = -0.1 / l;  % myelin anisotropic susceptibility (ppm)
-      new_model_parameters.myelin_phospholipid.xa = -0.1 / l;  % myelin anisotropic susceptibility (ppm)
+      new_model_parameters.myelin_phospholipid.xi = -0.1 / (1 - myelin_water_proportion);  % myelin anisotropic susceptibility (ppm)
+      new_model_parameters.myelin_phospholipid.xa = -0.1 / (1 - myelin_water_proportion);  % myelin anisotropic susceptibility (ppm)
 
       itl = itl+1;
       for k = [0 20]

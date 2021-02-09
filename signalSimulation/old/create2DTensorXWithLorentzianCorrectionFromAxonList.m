@@ -1,4 +1,4 @@
-function [tensor_X, total_model, total_X, phimap] = create2DTensorXFromAxonList(axonlist,model_parameters)
+function [tensor_X, total_model, phimap] = create2DTensorXWithLorentzianCorrectionFromAxonList(axonlist,model_parameters)
 % Create 2D susceptibility tensor (see Tianyou Xu 2018)
 
 total_X = zeros(model_parameters.dims(1),model_parameters.dims(2),3,3);
@@ -70,7 +70,7 @@ for j = 1:length(axonlist)
         phi = mod(gradient_direction(new_sub_myelin(k,1),new_sub_myelin(k,2)) + 2*pi, 2*pi) - pi;
 
         R = [cos(phi) -sin(phi) 0; sin(phi) cos(phi) 0; 0 0 1];
-        total_X(sub_myelin(k,1),sub_myelin(k,2),:,:) = myelin_Xi + R*myelin_Xa*inv(R);
+        total_X(sub_myelin(k,1),sub_myelin(k,2),:,:) = (2/3) * myelin_Xi + (1 - (cos(model_parameters.theta)).^2) * R * myelin_Xa * inv(R);
         
         if compute_phimap
             phimap(sub_myelin(k,1),sub_myelin(k,2)) = angle(exp(1i*phi));

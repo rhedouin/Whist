@@ -1,4 +1,4 @@
-function [signal, field] = simulateSignalFromModel(axon_collection, model_parameters)
+function [signal, field] = simulateSignalForOneAxonlWithLorentzianCorrection(axon_collection, model_parameters)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%% Inputs required
@@ -34,20 +34,14 @@ function [signal, field] = simulateSignalFromModel(axon_collection, model_parame
 
 number_dims = length(model_parameters.dims);
 
-if  number_dims == 2
-    [tensor_X, model]  = create2DTensorXFromAxonList(axon_collection, model_parameters);
+[tensor_X, model, total_X]  = create2DTensorXFromOneAxon(axon_collection,model_parameters);
     
-    field_complex = createFieldFrom2DTensorX(tensor_X, model_parameters);
-    field = real(field_complex);
-
-elseif number_dims == 3
-    [tensor_X, model]  = create3DTensorXFromAxonList(axon_collection, model_parameters);
+field_complex = createFieldFrom2DTensorX(tensor_X, model_parameters);
+field = real(field_complex);
     
-    field_complex = createFieldFrom3DTensorX(tensor_X, model_parameters);
-    field = real(field_complex);    
-else
-    error('unexpected number of dimension, should be 2 or 3');
-end
+%%%% Lorentzien correction
+susceptibility_Z = createSusceptibilityZ(total_X, model, model_parameters);
+field = applyFieldLorentzianCavityCorrection(field, susceptibility_Z, model_parameters);
 
 N = length(model_parameters.TE);
 
@@ -76,7 +70,7 @@ signal.myelin = model_parameters.myelin.weight * exp(-model_parameters.TE / mode
 signal.extra_axonal = model_parameters.extra_axonal.weight * exp(-model_parameters.TE / model_parameters.extra_axonal.T2).*signal.extra_axonal / nb_pixel;
 
 signal.total = signal.intra_axonal + signal.myelin + signal.extra_axonal;
-signal.total_normalized = signal.total ./ abs(signal.total(1));
+signal.total_normalized = signal.total / abs(signal.total(1));
 
 end
 

@@ -1,4 +1,4 @@
-function [tensor_X, phimap] = create2DTensorXFromOneAxon(model, model_parameters)
+function [tensor_X, total_X, phimap] = create2DTensorXFromOneAxon(model, model_parameters)
 % Create 2D susceptibility tensor (see Tianyou Xu 2018)
 model_parameters.dims = size(model);
 
@@ -64,6 +64,7 @@ for k = 1:size(sub_myelin_x,1)
     if compute_phimap
         phimap(sub_myelin_x(k), sub_myelin_y(k)) = angle(exp(1i*phi));
     end
+    
 end
 
 tensor_X(:,:,1) = total_X(:,:,1,1);

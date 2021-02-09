@@ -1,5 +1,5 @@
 % test Axon Function 
-% close all;
+close all;
 clear;
 
 %%%%%%%%% Set parameters
@@ -47,10 +47,13 @@ it = 0;
 
 % for l = [0.2 0.3 0.4 0.5]
 theta_list = linspace(0, pi/2, 19);
-% theta_list = pi/2;
+% theta_list = linspace(0, pi/2, 2);
 
+% proportion_list = [0.2 0.3 0.4 0.5];
 proportion_list = [0.3 0.5];
+
 nb_layer_list = [0 5 10 15 20];
+% nb_layer_list = [0 5 10];
 
 phi = 0;
 
@@ -62,9 +65,13 @@ for kPorportion = 1:length(proportion_list)
         theta = theta_list(kTheta);
         display(['theta: ' num2str(theta)]);
 
+        classic_model_parameters.theta = theta;
+                
         common_model_parameters.field_direction = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)];
         classic_model_parameters.field_direction = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)];
         new_model_parameters.field_direction = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)];
+         
+        classic_model_parameters.current_dir = classic_model_parameters.field_direction;
         
         classic_model_parameters.myelin.weight = proportion;
         myelin_water_proportion = classic_model_parameters.myelin.weight;
@@ -86,77 +93,42 @@ for kPorportion = 1:length(proportion_list)
             classic_model_parameters.dims = size(classic_model);
             
             if nb_layer == 0
-                tensor_X = create2DTensorXFromOneAxon(classic_model, classic_model_parameters);
+                [tensor_X_classic, total_X_classic] = create2DTensorXFromOneAxon(classic_model, classic_model_parameters);
+                
+                field_complex_classic = createFieldFrom2DTensorX(tensor_X_classic, classic_model_parameters);
+                field_classic = real(field_complex_classic);
+                
+                %%%% Lorentzian correction
+                susceptibility_Z = createSusceptibilityZ(total_X_classic, classic_model, classic_model_parameters);
+                field_classic_corrected = applyFieldLorentzianCavityCorrection(field_classic, susceptibility_Z, classic_model_parameters);
+                               
+                signals{kPorportion, kTheta, kLayer} = simulateSignalFromField(classic_model, field_classic_corrected, classic_model_parameters);
             else
                 tensor_X = create2DTensorXFromOneAxonWithMyelinWater(new_models, new_model_parameters);
+                
+                field_complex_myelin_layer = createFieldFrom2DTensorX(tensor_X, new_model_parameters);
+                field_myelin_layer = real(field_complex_myelin_layer);
+                
+                signals{kPorportion, kTheta, kLayer} = simulateSignalFromFieldWithMyelinWater(new_models, field_myelin_layer , new_model_parameters);
             end
             
-            field_complex = createFieldFrom2DTensorX(tensor_X, common_model_parameters);
-            field = real(field_complex);
-
-                        figure
-                        imagesc(field)
-                        
-            options.edges = -10 : 0.25 : 60;
-%             options.fontSize = 20;
-            options.LineWidth = 2;
-            options.plot= 1;
-            
-            if nb_layer == 0
-                [~, ~, meanShift(kLayer, kTheta), posShift(kLayer, kTheta), negShift(kLayer, kTheta)] = createHistogramFieldPerturbation(classic_model, field, options);
-            else
-                [~, ~, meanShift(kLayer, kTheta), posShift(kLayer, kTheta), negShift(kLayer, kTheta)] = createHistogramFieldPerturbationWithMyelinWater(new_models, field, options);
-            end
-                        
+            simi_signal(kPorportion, kTheta, kLayer) = computeSignalSimilarityIndex(signals{kPorportion, kTheta, kLayer}.total_normalized, signals{kPorportion, kTheta, 1}.total_normalized);
+                                          
             toc()
         end
     end
-    return;
-    figure(100)
-    hold on
-    
-    figure(201)
+    figure
     hold on
     
     x = round(theta_list*180/pi);
+
     for kLayer = 1:length(nb_layer_list)
-        figure(100)
-        errorbar(x, meanShift(kLayer, :), posShift(kLayer, :), negShift(kLayer, :), 'LineWidth', 1);
-        figure(201)
-        plot(x, meanShift(kLayer, :),'LineWidth',2);
+        plot(x, simi_signal(kPorportion, :, kLayer))
     end
-    
-    figure(100)
-
-    leg = legend('0', '5', '10', '15', '20');
-    
-    
-    title(['Myelin water proportion = ' num2str(proportion)])
-    ylabel('mean frequency shift')
-    xlabel('\theta')
-    
-    leg.NumColumns = 2;
-    
-    title(leg, {'number of myelin', 'water layers'})
-    set(gca, 'FontSize', 14, 'FontWeight','bold' )
-    
-    
-    figure(201)
-
-    leg = legend('0', '10');
-    
-    
-%     title(['Myelin water volume fraction = ' num2str(proportion)])
-    ylabel('mean frequency shift')
-    xlabel('\theta')
-    
-    leg.NumColumns = 2;
-    
-    title(leg, {'number of myelin', 'water layers'})
-    set(gca, 'FontSize', 14, 'FontWeight','bold' )
+    legend('0', '5', '10', '15', '20')
 end
 
-
+save('simi_signal_N400_LorentzianCorrection.mat','simi_signal')
 
 
 

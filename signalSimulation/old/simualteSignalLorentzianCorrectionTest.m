@@ -5,7 +5,7 @@
 % You can load your own WM model create by createOneWMModelExample.m
  
 clear
-% close all
+close all
 
 your_folder = [pwd,'/']; 
 % location of the toolbox
@@ -18,7 +18,7 @@ addpath(genpath(your_folder))
 % model_path = '/project/3015069.04/code/Whist/WMmodel/MyWMmodel.mat';
 
 %%%%%%%%%%%% Load a WM model with a single 3D axon
-model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
+model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
 
 load(model_path)
 
@@ -79,20 +79,82 @@ model_parameters.include_T1_effect = 1;
 % model_parameters = computeCompartmentSignalWeight(model_parameters);
 
 %%%%%%%%%% Simulate the field perturbation from the WM model and the multi GRE signals
-[signal_original, field] = simulateSignalFromModel(axon_collection, model_parameters);
+% [signal_original, field] = simulateSignalFromModel(axon_collection, model_parameters);
+
+[tensor_X, model]  = create2DTensorXFromAxonList(axon_collection, model_parameters);
+corrected_tensor_X = create2DTensorXWithLorentzianCorrectionFromAxonList(axon_collection,model_parameters);
+
+% figure
+% subplot(231)
+% imagesc(tensor_X(:,:,1))
+% colorbar
+% 
+% subplot(232)
+% imagesc(tensor_X(:,:,2))
+% colorbar    
+% 
+% subplot(233)
+% imagesc(tensor_X(:,:,3))
+% colorbar
+% 
+% subplot(234)
+% imagesc(tensor_X(:,:,4))
+% colorbar
+% 
+% subplot(235)
+% imagesc(tensor_X(:,:,5))
+% colorbar
+% 
+% subplot(236)
+% imagesc(tensor_X(:,:,6))
+% colorbar
+% 
+% 
+% figure
+% subplot(231)
+% imagesc(corrected_tensor_X(:,:,1))
+% colorbar
+% 
+% subplot(232)
+% imagesc(corrected_tensor_X(:,:,2))
+% colorbar    
+% 
+% subplot(233)
+% imagesc(corrected_tensor_X(:,:,3))
+% colorbar
+% 
+% subplot(234)
+% imagesc(corrected_tensor_X(:,:,4))
+% colorbar
+% 
+% subplot(235)
+% imagesc(corrected_tensor_X(:,:,5))
+% colorbar
+% 
+% subplot(236)
+% imagesc(corrected_tensor_X(:,:,6))
+% colorbar
+
+field_complex = createFieldFrom2DTensorX(tensor_X, model_parameters);
+field = real(field_complex);
+figure
+imagesc(field)
+colorbar
+
+corrected_field_complex = createFieldFrom2DTensorX(corrected_tensor_X, model_parameters);
+corrected_field = real(corrected_field_complex);
+figure
+imagesc(corrected_field)
+colorbar
 
 %%%%%%%%%% Plot frequency histogramm, field and signals
 options.mask = mask;
+options.plot = 1;
 
 createHistogramFieldPerturbation(model, field, options);
+createHistogramFieldPerturbation(model, corrected_field, options);
 
-if number_dims == 2
-    plot2DFieldAndSignal(field, signal_original.total, model_parameters.TE, model_parameters.field_direction)
-elseif number_dims == 3
-    plot3DFieldAndSignal(field, signal_original.total, model_parameters.TE, model_parameters.field_direction)
-else
-    error('dimension of the model should be 2 or 3');
-end
+
 
 
 

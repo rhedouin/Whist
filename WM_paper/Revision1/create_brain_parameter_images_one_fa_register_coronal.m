@@ -5,7 +5,7 @@ close all
 base_folder = ['/project/3015069.01/derived/BrainSample-2/ses-03/gre_renaud/'];
 ref_folder = [base_folder 'references/'];
 concatenate_folder = [base_folder 'concatenate_signals_9_orientations/'];
-parameter_folder = [concatenate_folder 'parameter_maps/noise4/'];
+parameter_folder = [concatenate_folder 'parameter_maps/BrainSample2LorentzianCorrection/'];
 
 parameter_list = {'FVF', 'gRatio', 'R2Myelin', 'R2IntraExtraAxonal', 'weight', 'xiMyelin'};
 
@@ -16,7 +16,7 @@ flip_angle_folder = [parameter_folder fa '/'];
 
 for k = 1:length(parameter_list)
     parameter = parameter_list{k};
-    parameter_map.(parameter) = load_nii_img_only([flip_angle_folder 'BrainSample-2_ses-03_' parameter '_' fa '_20_directions_polyfit_cartesian_with_theta_noise4_register.nii.gz']);
+    parameter_map.(parameter) = load_nii_img_only([flip_angle_folder 'BrainSample-2_ses-03_' parameter '_' fa '_polyfit_cartesian_with_theta_noise4_register.nii.gz']);
 
     parameter_map.(parameter)(mask==0) = 10000;
 

@@ -47,7 +47,7 @@ if number_dims == 2
     axon_index = sub2ind(dims, allAxon(:,1), allAxon(:,2));
     
     Model(myelin_index) = 1;
-    Model(axon_index)   = 2;
+    Model(axon_index)   = 0.5;
     
     ZoomedModel = Model(mask_min_x:mask_max_x, mask_min_y:mask_max_y);
     

@@ -3,18 +3,18 @@ clear
 close all
 
 concatenate_folder = '/project/3015069.01/derived/BrainSample-2/ses-03/gre_renaud/concatenate_signals_9_orientations/';
-parameter_folder = [concatenate_folder 'parameter_maps/noise4/'];
+parameter_folder = [concatenate_folder 'parameter_maps/BrainSample2LorentzianCorrection/'];
 
 mask = single(load_nii_img_only('/project/3015069.01/derived/BrainSample-2/ses-03/gre_renaud/masks/BrainSample-2_mask_coronal_73.nii.gz'));
 
-fa_list = {'fa-05', 'fa-10', 'fa-15', 'fa-20', 'fa-35', 'fa-60'}
+fa_list = {'fa-05', 'fa-10', 'fa-15', 'fa-20', 'fa-35', 'fa-60'};
 
 for k = 1:length(fa_list)
     fa = fa_list{k};
 
     flip_angle_folder = [parameter_folder fa '/'];
 
-    weight_parameter_map{k} = load_nii_img_only([flip_angle_folder 'BrainSample-2_ses-03_weight_' fa '_20_directions_polyfit_cartesian_with_theta_noise4_register.nii.gz']);
+    weight_parameter_map{k} = load_nii_img_only([flip_angle_folder 'BrainSample-2_ses-03_weight_' fa '_polyfit_cartesian_with_theta_noise4_register.nii.gz']);
     weight_parameter_map{k}(mask==0) = 10000;
     
     weight_parameter_map_permute{k} = zeros(82, 128, 128);
