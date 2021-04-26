@@ -2,8 +2,8 @@ function out = plot3DFieldAndSignal(field, signal, TE, field_direction)
 % plot signal and field
 
 h = figure('Name', 'Field perturbation and GRE signals');
-position = [10 10 1490 890];
-h.Position = position;
+% position = [10 10 1490 890];
+% h.Position = position;
 
 magn_signal = abs(signal);
 phase_signal = phase(signal);

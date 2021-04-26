@@ -4,20 +4,16 @@ function [hist, edges] = createHistogramFieldPerturbation(Model, Field, options)
         options.null = 1;
     end
 
-    if ~isfield(options, 'keep_figure')
+    if ~isfield(options, 'keep_figure') || options.keep_figure == 0
         h = figure('Name', 'Frequency histogram');
     else 
         hold on
     end
     
     if isfield(options, 'edges')
-        edges.intra_axonal = options.edges.intra_axonal;
-        edges.myelin = options.edges.myelin;
-        edges.extra_axonal = options.edges.extra_axonal;
+        edges = options.edges;
     else
-        edges.intra_axonal = (-15 : 0.5 : 5);
-        edges.myelin = (-10 : 0.5 : 20);
-        edges.extra_axonal = (-10 : 0.5 : 10);
+        edges = (-15 : 0.5 : 15);
     end
     
     if isfield(options, 'line_style')
@@ -50,24 +46,23 @@ function [hist, edges] = createHistogramFieldPerturbation(Model, Field, options)
     
     nb_pixels = sum(mask(:));
 
-    [hist.intra_axonal, edges.intra_axonal] = histcounts(listField(Model == 0.5),edges.intra_axonal);
+    [hist.intra_axonal, edges] = histcounts(listField(Model == 0.5),edges);
     hist.intra_axonal = hist.intra_axonal/nb_pixels;
     
-    [hist.myelin, edges.myelin] = histcounts(listField(Model == 1),edges.myelin);
+    [hist.myelin, edges] = histcounts(listField(Model == 1),edges);
     hist.myelin = hist.myelin/nb_pixels;
     
-    [hist.extra_axonal, edges.extra_axonal] = histcounts(listField(Model == 0),edges.extra_axonal);
+    [hist.extra_axonal, edges] = histcounts(listField(Model == 0),edges);
     hist.extra_axonal = hist.extra_axonal/nb_pixels;
-    
-       
+           
     if plot_hist
-        plot(edges.intra_axonal(1:end-1),hist.intra_axonal , [line_style 'r'], ...
+        plot(edges(1:end-1),hist.intra_axonal , [line_style 'r'], ...
             'LineWidth',LineWidth)
         
-        plot(edges.myelin(1:end-1),hist.myelin , [line_style 'b'], ...
+        plot(edges(1:end-1),hist.myelin , [line_style 'b'], ...
             'LineWidth',LineWidth)
         
-        plot(edges.extra_axonal(1:end-1), hist.extra_axonal, [line_style 'g'], ...
+        plot(edges(1:end-1), hist.extra_axonal, [line_style 'g'], ...
             'LineWidth',LineWidth)
     end
     

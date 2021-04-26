@@ -5,20 +5,20 @@
 % You can load your own WM model create by createOneWMModelExample.m
  
 clear
-% close all
+close all
 
 your_folder = [pwd,'/']; 
 % location of the toolbox
 addpath(genpath(your_folder))
 
 %%%%%%%%%%%% Load a WM model with a single 2D axon
-% model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
-
-%%%%%%%%%%%% Load your WM model 
-% model_path = '/project/3015069.04/code/Whist/WMmodel/MyWMmodel.mat';
+% model_path = [your_folder 'data/oneAxon2D.mat'];
 
 %%%%%%%%%%%% Load a WM model with a single 3D axon
-model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
+model_path = [your_folder 'data/oneAxon3D.mat'];
+
+%%%%%%%%%%%% Load your WM model 
+% model_path = [your_folder 'WMmodel/MyWMModel.mat'];
 
 load(model_path)
 

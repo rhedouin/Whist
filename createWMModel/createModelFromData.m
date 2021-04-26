@@ -54,7 +54,7 @@ if number_dims == 2
     AVF = length(find(Model.*mask == 0.5));
     MVF = length(find(Model.*mask == 1));
     
-    FVF = (AVF + MVF) / sum(mask, 'all');
+    FVF = (AVF + MVF) / sum(mask(:));
     g_ratio = sqrt(AVF / (AVF + MVF));
     if plot_model
         imagesc(Model);
@@ -104,13 +104,13 @@ elseif number_dims == 3
     AVF = length(find(Model.*mask == 0.5));
     MVF = length(find(Model.*mask == 1));
     
-    FVF = (AVF + MVF) / sum(mask, 'all');
+    FVF = (AVF + MVF) / sum(mask(:));
     g_ratio = sqrt(AVF / (AVF + MVF));
     
     if plot_model
         h = figure('Name', '3D WM model');
-        position = [10 10 990 890];
-        h.Position = position;           
+%         position = [10 10 990 890];
+%         h.Position = position;           
         
         subplot(221)
         text(0, 0.5, {'3D WM model', 'slice view of the middle of each dimension', ...

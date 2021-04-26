@@ -1,7 +1,7 @@
 function axon_collection = avoidAxonOverlap(axon_collection, dims)
 
 Lbin = computeAxonsSuperpositionMatrix(axon_collection, dims);
-nb_axons_overlap = sum(Lbin, 'all')/2;
+nb_axons_overlap = sum(Lbin(:))/2;
 
 iter = 0;
 
@@ -17,7 +17,7 @@ while and((nb_axons_overlap ~= 0), iter < 50);
     N=size(pts,1);
     % intersection
     Lbin = computeAxonsSuperpositionMatrix(axon_collection, dims);
-    nb_axons_overlap = sum(Lbin, 'all')/2;
+    nb_axons_overlap = sum(Lbin(:))/2;
 
     Lbin2 = repmat(Lbin, [1, 1, 2]);
     inter1_index = repmat(sum(Lbin,2),[1,2]);

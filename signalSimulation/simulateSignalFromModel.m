@@ -59,16 +59,16 @@ intra_axonal_index = (model == 0.5);
 myelin_index = (model == 1);
 extra_axonal_index = (model == 0 );
 
-nb_pixel = sum(model_parameters.mask, 'all');
+nb_pixel = sum(model_parameters.mask(:));
 
 for l = 1:N    
     C.intra_axonal = exp(1i*model_parameters.TE(l)*omega(intra_axonal_index));
     C.myelin = exp(1i*model_parameters.TE(l)*omega(myelin_index));
     C.extra_axonal = exp(1i*model_parameters.TE(l)*omega(extra_axonal_index));
     
-    signal.intra_axonal(l) = sum(C.intra_axonal, 'all');
-    signal.myelin(l) = sum(C.myelin, 'all');
-    signal.extra_axonal(l) = sum(C.extra_axonal, 'all');
+    signal.intra_axonal(l) = sum(C.intra_axonal(:));
+    signal.myelin(l) = sum(C.myelin(:));
+    signal.extra_axonal(l) = sum(C.extra_axonal(:));
 end
 
 signal.intra_axonal = model_parameters.intra_axonal.weight * exp(-model_parameters.TE / model_parameters.intra_axonal.T2).* signal.intra_axonal / nb_pixel;

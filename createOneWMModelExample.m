@@ -19,7 +19,8 @@ close all;
 your_folder = [pwd,'/']; 
 % location of the toolbox
 axon_dictionary_path = [your_folder 'data/axonMediumDict.mat'];
-addpath([your_folder 'createWMModel'])
+addpath(genpath(your_folder));
+
 % axon dictionary path
 
 %%%%%%%%%% Options 
