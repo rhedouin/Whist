@@ -1,8 +1,8 @@
 # Whist
 White matter simulation toolbox
 
-This toolbox is related to a paper available on biorxiv
-https://www.biorxiv.org/content/10.1101/2020.06.23.127258v1
+This toolbox is related to a paper available on Neuroimage
+https://www.sciencedirect.com/science/article/pii/S1053811921004158
 
 This matlab toolbox has 2 main purposes 
 
