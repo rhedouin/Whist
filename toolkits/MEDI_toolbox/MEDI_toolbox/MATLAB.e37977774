@@ -1,2 +1,0 @@
-/opt/cluster/bin/yadjobinfo: line 89: 11713 Terminated              sleep 1
-awk: (FILENAME=- FNR=1) warning: error writing standard output (Broken pipe)

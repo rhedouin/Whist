@@ -1,4 +1,11 @@
-This toolbox is used to 
+This toolbox was developped to create WM model and use it to obtain microstructural information.
+Refer to this paper:
+
+Decoding the microstructural properties of white matter using realistic
+models, NeuroImage, Hédouin et al.
+
+This toolbox has the following functionnalities:
+
 create WM Models (1)
 simulate the corresponding ME-GRE (2)
 create a dictionary from these signals (3)
@@ -12,6 +19,8 @@ recover brain parameter maps (6)
 see createOneWMModelExample.m
 Easy to parallelize if a large number of WM models are needed
 
+Another option is now available to create one axon with myelin water layers (see WMModelMyelinWithLayer). Several functions directly create the figures presented in Appendix B of the paper.
+
 (2) functions in signalSimulations
 simulate the ME-GRE signal for one WM model
 see simulateFieldPerturbationExample.m 
@@ -19,7 +28,7 @@ see simulateFieldPerturbationExample.m
 (3) functions in signalSimulations
 simulate the ME-GRE signal for many WM models and microstructure parameters range
 everything is parallelized
-createDictionaryCompletePipeline.m directly creates the dictionary from the WM models following several steps:
+createDictionaryCompletePipelineWithLorentzianCorrection.m directly creates the dictionary from the WM models following several steps:
 computeCompartmentSignalFromModels creates the field perturbation and the corresponding ME-GRE signals for different WM models parameters (FVF, g-ratio) for each compartment (intra-axonal, extra-axonal, myelin) 
 computeTotalSignalDictionaryPart creates the total signal adding the T2 weighting, the compartment weights and normalize the signal
 concatenateDictionaryParts concatenates the previous results into an entire dictionary

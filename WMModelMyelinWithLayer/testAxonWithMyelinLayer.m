@@ -37,7 +37,5 @@ end
 model(logical((dist > axonThickness + nbWaterLayer*unitCombineLayerThickness) .* (dist < axonThickness + nbWaterLayer*unitCombineLayerThickness + unitMyelinLayerThickness))) = 0; 
 model((logical(dist > axonThickness + totalMyelinThickness))) = 1;
 
-%model(logical((dist > axonThickness + totalMyelinThickness - unitMyelinLayerThickness) .* (dist < axonThickness + totalMyelinThickness))) = 5; 
-
 figure
 imagesc(model)

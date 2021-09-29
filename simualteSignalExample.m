@@ -12,13 +12,13 @@ your_folder = [pwd,'/'];
 addpath(genpath(your_folder))
 
 %%%%%%%%%%%% Load a WM model with a single 2D axon
-% model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
+model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
 
 %%%%%%%%%%%% Load your WM model 
 % model_path = '/project/3015069.04/code/Whist/WMmodel/MyWMmodel.mat';
 
 %%%%%%%%%%%% Load a WM model with a single 3D axon
-model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
+% model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
 
 load(model_path)
 
@@ -35,6 +35,7 @@ plot_model = 1;
 model_parameters.mask = mask;
 
 % myelin (required: T2, xi, xa)
+model_parameters.myelin.weight= 0.5; 
 model_parameters.myelin.T2 = 15*1e-3;
 model_parameters.myelin.T1 = 500*1e-3;
 model_parameters.myelin.proton_density= 0.5; 
@@ -43,12 +44,14 @@ model_parameters.myelin.xi = -0.1;  % myelin anisotropic susceptibility (ppm)
 model_parameters.myelin.xa = -0.1;  % myelin isotropic susceptibility (ppm)
 
 % intra axonal (required: T2)
+model_parameters.intra_axonal.weight = 1;
 model_parameters.intra_axonal.T2 = 50*1e-3;
 model_parameters.intra_axonal.T1 = 1.5;
 model_parameters.intra_axonal.proton_density= 1; 
 model_parameters.intra_axonal.xi= 0; 
 
 % extra axonal (required: T2)
+model_parameters.extra_axonal.weight = 1;
 model_parameters.extra_axonal.T2 = 50*1e-3;
 model_parameters.extra_axonal.T1 = 1.5;
 model_parameters.extra_axonal.proton_density= 1; 
