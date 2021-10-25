@@ -4,6 +4,9 @@ Refer to this paper:
 Decoding the microstructural properties of white matter using realistic
 models, NeuroImage, Hédouin et al.
 
+This toolbox is associated with a data sharing collection to allow to reproduce most of the results of the article
+https://data.donders.ru.nl/collections/di/dccn/DSC_3015069.04_445?0
+
 This toolbox has the following functionalities:
 
 create WM Models (1)
