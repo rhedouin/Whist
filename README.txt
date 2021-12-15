@@ -1,4 +1,4 @@
-Whist: WHIte matter Stimulation Toolbox
+﻿Whist: WHIte matter Stimulation Toolbox
 
 This toolbox was developped to create WM model and use it to obtain microstructural information.
 Refer to this paper:
