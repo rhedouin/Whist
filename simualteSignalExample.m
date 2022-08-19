@@ -7,15 +7,15 @@
 clear
 % close all
 
-your_folder = [pwd,'/']; 
+your_folder = '/home/rhedouin/Code/Whist'; 
 % location of the toolbox
 addpath(genpath(your_folder))
 
 %%%%%%%%%%%% Load a WM model with a single 2D axon
-model_path = '/project/3015069.04/code/Whist/data/oneAxon2D.mat';
+model_path = '/home/rhedouin/Code/Whist/data/oneAxon2D.mat';
 
 %%%%%%%%%%%% Load your WM model 
-% model_path = '/project/3015069.04/code/Whist/WMmodel/MyWMmodel.mat';
+% model_path = '/home/rhedouin/Code/Whist/WMmodel/MyWMModel.mat';
 
 %%%%%%%%%%%% Load a WM model with a single 3D axon
 % model_path = '/project/3015069.04/code/Whist/data/oneAxon3D.mat';
@@ -26,7 +26,6 @@ number_dims = ndims(mask);
 model_parameters.dims = size(mask);
 
 plot_model = 1;
-
 % Create and plot your model
 [model, zoomed_model, FVF, g_ratio] = createModelFromData(axon_collection, mask, plot_model);
 
@@ -60,12 +59,12 @@ model_parameters.extra_axonal.xi= 0;
 % main magnetic field strength in Tesla (required)
 model_parameters.B0 = 3;
 % magnetic field orientation (required)
-theta = pi/2;
-phi = 0;
 model_parameters.theta = pi/2;
 model_parameters.phi = 0;
 
-model_parameters.field_direction = [sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)];
+model_parameters.field_direction = [sin(model_parameters.theta)*cos(model_parameters.phi), ...
+                                    sin(model_parameters.theta)*sin(model_parameters.phi), ...
+                                    cos(model_parameters.theta)];
 
 % TE (required)
 model_parameters.TE = (2:3:80)*1e-3;
@@ -76,13 +75,22 @@ model_parameters.TR = 60*1e-3;
 % 
 model_parameters.include_proton_density = 1;
 model_parameters.include_T1_effect = 1;
+
+% apply or not the Lorentzian correction (see He and Yablonskiy (2009))
+model_parameters.Lorentzian = 0;
 %%%%%%%%%%%
 
 % Estimate the relative weights of each compartment
 % model_parameters = computeCompartmentSignalWeight(model_parameters);
 
 %%%%%%%%%% Simulate the field perturbation from the WM model and the multi GRE signals
-[signal_original, field] = simulateSignalFromModel(axon_collection, model_parameters);
+if model_parameters.Lorentzian
+    [signal_original, field] = simulateSignalFromModelWithLorentzianCorrection(axon_collection, model_parameters);
+elseif model_parameters.Lorentzian == 0
+    [signal_original, field] = simulateSignalFromModel(axon_collection, model_parameters);
+else
+    error('Lorentzian parameter need to be 0 or 1');
+end
 
 %%%%%%%%%% Plot frequency histogramm, field and signals
 options.mask = mask;

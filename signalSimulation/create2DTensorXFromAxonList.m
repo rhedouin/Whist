@@ -52,7 +52,6 @@ for j = 1:length(axonlist)
     total_model = total_model + map;
 
     sigma=2;
-    
     smooth_small_map = imgaussfilt(small_map,sigma, 'FilterSize',5);   
     [gradient_magnitude,gradient_direction] = imgradient(smooth_small_map);
     

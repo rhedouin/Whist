@@ -54,7 +54,7 @@ if number_dims == 2
     AVF = length(find(Model.*mask == 0.5));
     MVF = length(find(Model.*mask == 1));
     
-    FVF = (AVF + MVF) / sum(mask, 'all');
+    FVF = (AVF + MVF) / sum(mask(:));
     g_ratio = sqrt(AVF / (AVF + MVF));
     
     if plot_model
@@ -104,7 +104,7 @@ elseif number_dims == 3
     AVF = length(find(Model.*mask == 0.5));
     MVF = length(find(Model.*mask == 1));
     
-    FVF = (AVF + MVF) / sum(mask, 'all');
+    FVF = (AVF + MVF) / sum(mask(:));
     g_ratio = sqrt(AVF / (AVF + MVF));
     
     if plot_model
