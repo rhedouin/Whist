@@ -1,12 +1,12 @@
 ﻿Whist: WHIte matter Stimulation Toolbox
 
-This toolbox was developped to create WM model and use it to obtain microstructural information.
+This toolbox was developed to create WM models (using Matlab) and use them combined with a deep learning network (using Python) to obtain microstructural information.
 Refer to this paper:
 
 Decoding the microstructural properties of white matter using realistic
 models, NeuroImage, Hédouin et al.
 
-This toolbox is associated with a data sharing collection to allow to reproduce most of the results of the article
+This toolbox is associated with a data-sharing collection to allow to reproduce most of the results of the article
 https://data.donders.ru.nl/collections/di/dccn/DSC_3015069.04_445?0
 
 This toolbox has the following functionalities:
@@ -37,22 +37,22 @@ See simulate_field_perturbation_and_GRE_signal.mp4 for an illustration
 
 everything is parallelized
 createDictionaryCompletePipelineWithLorentzianCorrection.m directly creates the dictionary from the WM models following several steps:
-computeCompartmentSignalFromModels creates the field perturbation and the corresponding ME-GRE signals for different WM models parameters (FVF, g-ratio) for each compartment (intra-axonal, extra-axonal, myelin) 
-computeTotalSignalDictionaryPart creates the total signal adding the T2 weighting, the compartment weights and normalize the signal
+computeCompartmentSignalFromModels creates the field perturbation and the corresponding ME-GRE signals for different WM model parameters (FVF, g-ratio) for each compartment (intra-axonal, extra-axonal, myelin) 
+computeTotalSignalDictionaryPart creates the total signal adding the T2 weighting, the compartment weights and normalizing the signal
 concatenateDictionaryParts concatenates the previous results into an entire dictionary
 
 (4) Deep_learning training
 Keras_train_WMModel_BS3_all_orientations_with_regularization_new_scaling.py within deep_learning
-To be used on a GPU, just need to fill the dictionary details
+To be used on a GPU, just need to fill in the dictionary details
 
 (5) exVivoProcessing
 see transformAndConcatenateBS3DataMain.m (parallalized along flip angles)
-Processed the data from acquisition, take the magn and unwrapped phase all registered in the same space (same rotations should be used than with the dictionary) and transform it into a ME-GRE signal normalized concatenate along all orientations and include the theta fiber orientation.
+Processed the data from acquisition, took the magn and unwrapped phase all registered in the same space (same rotations should be used than with the dictionary) and transformed it into a ME-GRE signal normalized concatenate along all orientations and include the theta fiber orientation.
 
-(6) Deep_learning application to processed data
+(6) Deep_learning application to process data
 recover_parameter_BS3_all_orientations_polyfit_cartesian_new_scaling.py
 To be used on GPU, create brain parameter maps from the trained deep learning (4) and the concatenate signals (5)
 
-If you have any question or you would like to provide suggestion to improve this toolbox/report bug(s) please feel free to contact me renaud.hedouin@gmail.com (Renaud Hédouin)
+If you have any questions or you would like to provide suggestions to improve this toolbox/report bug(s) please feel free to contact me renaud.hedouin@gmail.com (Renaud Hédouin)
 
 
